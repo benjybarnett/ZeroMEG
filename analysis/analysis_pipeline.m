@@ -94,15 +94,6 @@ for subj = 1:length(subjects)
     cfg.localizer = false;
     PreprocessingVAR_BOB(cfg,subject);
 
-%{
-    %localizer task - can be more lenient on blink trials as stims on for
-    %longer
-    cfg.stimOn = [0 0.3]; 
-    cfg.dataName = 'loc_data_preproc';
-    cfg.saveName = 'loc_data_VAR';
-    cfg.localizer = true;
-    PreprocessingVAR_BOB(cfg,subject);
-%}
 
 end
 

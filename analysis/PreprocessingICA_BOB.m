@@ -21,7 +21,7 @@ data = data.data;
 %end
 
 % check if ICA already done
-if ~exist(fullfile(outputComp,comp_output),'file')
+%if ~exist(fullfile(outputComp,comp_output),'file')
     
     % perform the independent component analysis (i.e., decompose the data)
     cfg                 = [];
@@ -33,9 +33,9 @@ if ~exist(fullfile(outputComp,comp_output),'file')
     % save the components
     save(fullfile(outputComp,comp_output),'comp','-v7.3')
     
-else 
+%else 
    % load(fullfile(outputComp,comp_output))
-end
+%end
 % identify EOG and ECG components    
 
 % correlate to eye tracking
@@ -138,7 +138,7 @@ save(fullfile(outputComp,comp_output),'comp_removed','-append')
 
 %save CLEAN data
 %if cfg0.localizer == false
-    save(fullfile(outputData,'data.mat'),'data','-v7.3'); clear data
+    save(fullfile(outputData,'data2.mat'),'data','-v7.3'); clear data
 %else
  %   save(fullfile(outputData,'loc_data.mat'),'data','-v7.3'); clear data
 %end

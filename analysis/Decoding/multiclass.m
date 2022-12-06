@@ -22,6 +22,9 @@ disp('loaded data')
 cfgS = [];
 cfgS.trials =~(det_data.no_det_resp);
 det_data = ft_selectdata(cfgS,det_data);
+cfgS.trials = det_data.trialinfo(:,9) == 1;
+det_labels = det_data.det_labels(det_data.trialinfo(:,9) == 1);
+det_data = ft_selectdata(cfgS,det_data);
 
 
 %% Get Trial x Channels x Time Matrix For Each Task
@@ -51,32 +54,32 @@ cfgS.classifier = 'multiclass_lda';
 cfgS.metric = cfg0.metric;
 cfgS.preprocess ={'undersample'};
 cfgS.repeat = 1;
-[results_num,~] = mv_classify_timextime(cfgS,smoothed_num_data,num_labels);
+%[results_num,~] = mv_classify_timextime(cfgS,smoothed_num_data,num_labels);
 [results_det,~] = mv_classify_timextime(cfgS,smoothed_det_data,det_labels);
 %Get accuracy and confusion matrices separately
 if length(cfg0.metric) > 1
     acc_mask = strcmp(cfg0.metric, 'acc'); acc_location = find(acc_mask); conf_location = find(~acc_mask);    
-    within_num_acc = results_num{acc_location}';%coz mvpa light has axes switched
-    within_num_conf = results_num{conf_location};
+    %within_num_acc = results_num{acc_location}';%coz mvpa light has axes switched
+    %within_num_conf = results_num{conf_location};
     within_det_acc = results_det{acc_location}';%coz mvpa light has axes switched
     within_det_conf = results_det{conf_location};
     %Save
-    save(fullfile(outputDir,[cfg0.output_prefix{1},cfg0.metric{acc_location}]),'within_num_acc');
-    save(fullfile(outputDir,[cfg0.output_prefix{2},cfg0.metric{acc_location}]),'within_det_acc');
+    %save(fullfile(outputDir,[cfg0.output_prefix{1},cfg0.metric{acc_location}]),'within_num_acc');
+    %save(fullfile(outputDir,[cfg0.output_prefix{2},cfg0.metric{acc_location}]),'within_det_acc');
     save(fullfile(outputDir,[cfg0.output_prefix{1},cfg0.metric{conf_location}]),'within_num_conf');
     save(fullfile(outputDir,[cfg0.output_prefix{2},cfg0.metric{conf_location}]),'within_det_conf');   
 elseif length(cfg0.metric) == 1
     if strcmp(cfg0.metric, 'acc')
-        within_num_acc = results_num'; 
+        %within_num_acc = results_num'; 
         within_det_acc = results_det';
         %Save
-        save(fullfile(outputDir,[cfg0.output_prefix{1},cfg0.metric]),'within_num_acc');
-        save(fullfile(outputDir,[cfg0.output_prefix{2},cfg0.metric]),'within_det_acc');
+        %save(fullfile(outputDir,[cfg0.output_prefix{1},cfg0.metric]),'within_num_acc');
+        save(fullfile(outputDir,[cfg0.output_prefix{2},cfg0.metric{1}]),'within_det_acc');
     elseif strcmp(cfg0.metric, 'conf')
-        within_num_conf = results_num;
+        %within_num_conf = results_num;
         within_det_conf = results_det;
         %Save
-        save(fullfile(outputDir,[cfg0.output_prefix{1},cfg0.metric]),'within_num_conf');
+        %save(fullfile(outputDir,[cfg0.output_prefix{1},cfg0.metric]),'within_num_conf');
         save(fullfile(outputDir,[cfg0.output_prefix{2},cfg0.metric]),'within_det_conf');
     end
 end

@@ -1,4 +1,5 @@
 function dataMain = AlignPDiode(cfg0,data)
+
     cfg = [];
     cfg.channel = cfg0.trialdef.pdiodetype ;
     lightDiodeSignal = ft_preprocessing(cfg, data);

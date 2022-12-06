@@ -58,36 +58,36 @@ function [curves] = BehaviourAnalysis(cfg0,subject)
     ylim([0 70])
 
     %Tuning curves
-    [zero_incorrect,one_incorrect,two_incorrect,three_incorrect,four_incorrect,five_incorrect] = GetIncorrects(num_data);
-    [zero_correct,one_correct,two_correct,three_correct,four_correct,five_correct] = GetCorrects(num_data);
+    [zero_incorrect,one_incorrect,two_incorrect,three_incorrect] = GetIncorrects(num_data);
+    [zero_correct,one_correct,two_correct,three_correct] = GetCorrects(num_data);
     zero_curve = [zero_correct,zero_incorrect];
     one_curve = [one_incorrect(1),one_correct,one_incorrect(2:end)];
     two_curve = [two_incorrect(1:2),two_correct,two_incorrect(3:end)];
     three_curve = [three_incorrect(1:3),three_correct,three_incorrect(4:end)];
     four_curve = [four_incorrect(1:4),four_correct,four_incorrect(5)];
-    five_curve = [five_incorrect,five_correct];
+    
 
-    curves = {zero_curve one_curve two_curve three_curve four_curve five_curve};
+    curves = {zero_curve one_curve two_curve three_curve};
     
     %plot
     figure;
-    x = [0 1 2 3 4 5];
+    x = [0 1 2 3];
  
-    colors = {'red','#FFA500','#32CD32','cyan','blue','green'};
+    colors = {'red','#FFA500','#32CD32','cyan'};
     for cl = 1:length(curves)
         curve = curves{cl};
         plot(x,curve,'Color',colors{cl},'LineWidth' , 1.2)
-        xticks([0 1 2 3 4 5]);
+        xticks([0 1 2 3]);
         ylabel('% same as sample')
         xlabel('Test Numerosity')
         
         hold on
     end
-    legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'});
+    legend({'Zero' 'One' 'Two' 'Three'});
     saveas(gcf,fullfile(outputDir,'numerical.png'))
     
     %return
-    curves = [zero_curve; one_curve; two_curve; three_curve; four_curve; five_curve];
+    curves = [zero_curve; one_curve; two_curve; three_curve];
    
    
 end

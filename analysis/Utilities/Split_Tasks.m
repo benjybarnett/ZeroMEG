@@ -2,7 +2,7 @@ function Split_Tasks(cfg0,subject)
     
 
     datadir = cfg0.datadir;
-    load(fullfile(datadir,'CleanData',subject,'data.mat'));  
+    load(fullfile(datadir,'CleanData',subject,'data2.mat'));  
     
     %% Create Fields for Class Labels
     det_labels = zeros(size(find(data.trialinfo(:,3)==2),1),1);
@@ -27,7 +27,7 @@ function Split_Tasks(cfg0,subject)
     cfg.trials = data.trialinfo(:,3) == 2; %select detection task
     det_data = ft_selectdata(cfg,data);
     det_data.det_labels = det_labels(det_labels>0);
-    save(fullfile(root,subject,'det_data.mat'),'det_data');
+    save(fullfile(root,subject,'det_data2.mat'),'det_data');
     
     %numerical task
     cfg = [];
@@ -36,18 +36,12 @@ function Split_Tasks(cfg0,subject)
     cfg.trials = data.trialinfo(:,3) == 1;
     num_data = ft_selectdata(cfg,data);
     num_data.num_labels = num_labels+1;
-    save(fullfile(root,subject,'num_data.mat'),'num_data');
-
-    %localizer task
-    cfg = [];
-    root = 'D:\bbarnett\Documents\Zero\data\CleanData';
-    cfg.channel = 'MEG';
-    cfg.trials = data.trialinfo(:,3) == 0;
-    loc_data = ft_selectdata(cfg,data);
-    save(fullfile(root,subject,'loc_data.mat'),'loc_data');
+    save(fullfile(root,subject,'num_data2.mat'),'num_data');
 
 
-    clear data num_data det_data loc_data
+
+
+    clear data num_data det_data 
 
 
 end

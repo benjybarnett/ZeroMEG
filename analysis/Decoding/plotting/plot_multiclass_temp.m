@@ -36,6 +36,7 @@ function plot_multiclass_temp(cfg0, subjects)
         all_det_acc(subj,:,:) = det_acc;
         
         clear num_acc det_acc
+        %{
 
         %Group Confusion Matrices
         num_conf_tmp = struct2cell(num_conf_tmp); num_conf_tmp = num_conf_tmp{1};
@@ -52,6 +53,7 @@ function plot_multiclass_temp(cfg0, subjects)
 
         all_num_conf(subj,:,:,:) = num_conf;
         all_det_conf(subj,:,:,:) = det_conf;
+        %}
 
         clear num_conf det_conf num_conf_tmp det_conf_tmp
     end
@@ -61,9 +63,10 @@ function plot_multiclass_temp(cfg0, subjects)
     mean_det_acc = squeeze(mean(all_det_acc,1));
 
     %% Compute Average Confusion Matrices
+    %{
     mean_num_conf = squeeze(mean(all_num_conf,1));
     mean_det_conf = squeeze(mean(all_det_conf,1));
-
+    %}
     %% Plot Temporal Generalisation Matrices
     if strcmp(cfg0.decoding_type,'cross')
         titles = {'Train on Number, Test on Detection', 'Train on Detection, Test on Number','Train on Number: Diagonal','Train on Detection: Diagonal'};
@@ -111,7 +114,7 @@ function plot_multiclass_temp(cfg0, subjects)
     fill(x, inBetween,'b', 'FaceColor','#F34C53','FaceAlpha','0.2','EdgeAlpha','0.2','EdgeColor','none');
     hold on;
     plot(time,mean_num_diag,'Color', '#0621A6', 'LineWidth', 1);
-    yline(0.25,'black--');
+    yline(0.5,'black--');
     xlim([time(1) time(end)]);
     ylim(cfg0.ylim)
     title(titles{3});
@@ -135,7 +138,7 @@ function plot_multiclass_temp(cfg0, subjects)
     fill(x, inBetween,'b', 'FaceColor','#F34C53','FaceAlpha','0.2','EdgeAlpha','0.2','EdgeColor','none');
     hold on;
     plot(time,mean_det_diag,'Color', '#0621A6', 'LineWidth', 1);
-    yline(0.25,'black--');
+    yline(0.5,'black--');
     title(titles{4});
     xlim([time(1) time(end)]);
     ylim(cfg0.ylim)
@@ -143,6 +146,7 @@ function plot_multiclass_temp(cfg0, subjects)
     xlabel('Time (s)')
 
     %% Plot Confusion Matrices
+    %{
     if strcmp(cfg0.decoding_type,'cross')
         confusion_titles = {'Abs-High','Abs-Low','Pres-Low','Pres-High','Zero','One','Two','Three'};
     else
@@ -255,7 +259,7 @@ function plot_multiclass_temp(cfg0, subjects)
         xlabel('Time (seconds)','FontName','Arial')
         title(confusion_titles(true_class+4),'FontName','Arial')   
     end
-
+    %}
     %% Save
     outputDir = fullfile(cfg0.root,cfg0.output_path,'Group');
     if ~exist(outputDir,'dir')
