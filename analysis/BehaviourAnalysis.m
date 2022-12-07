@@ -73,7 +73,7 @@ function [curves] = BehaviourAnalysis(cfg0,subject)
     figure;
     x = [0 1 2 3 4 5];
  
-    colors = {'red','#FFA500','#32CD32','cyan','blue','green'};
+    colors = {'red','#FFA500','#32CD32','cyan','blue','magenta'};
     for cl = 1:length(curves)
         curve = curves{cl};
         plot(x,curve,'Color',colors{cl},'LineWidth' , 1.2)
@@ -83,11 +83,24 @@ function [curves] = BehaviourAnalysis(cfg0,subject)
         
         hold on
     end
-    legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'});
+   % legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'});
     saveas(gcf,fullfile(outputDir,'numerical.png'))
     
     %return
     curves = [zero_curve; one_curve; two_curve; three_curve; four_curve; five_curve];
    
-   
+    %RTs as distance between sample and test differs
+    figure;
+    [meanRTs,sdRTs] = GetRTs(num_data);
+    x =0:length(meanRTs)-1;
+    bar(x,meanRTs);
+    hold on
+    er = errorbar(x,meanRTs,sdRTs,sdRTs);    
+    er.Color = [0 0 0];                            
+    er.LineStyle = 'none';  
+
+    hold off
+    xlabel('Distance between sample and test number')
+    ylabel('Mean RT (secs)')
+    
 end
