@@ -1,5 +1,5 @@
 clear all;
-subj = 'sub02';
+subj = 'sub001';
 data_dir = 'D:\bbarnett\Documents\Zero\data\Raw';
 files = dir(fullfile(data_dir,subj,'meg','trial_data','*.mat'));
 
@@ -137,7 +137,7 @@ clear numCorr corrects
 %% Save as CSV
 outputFile = fullfile(data_dir,subj,'meg','trial_data','data.mat');
 
-datacsv = cell2mat(data);
+data= cell2mat(data);
 save(outputFile,'data');
 
 outputFile = fullfile(data_dir,subj,'meg','trial_data','data.csv');

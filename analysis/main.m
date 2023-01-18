@@ -18,11 +18,7 @@ startup_MVPA_Light
 
 %% Zero Project Analysis
 subjects = {
-    'sub3'
-    'sub4'
-    'sub5'
-    'sub6'
-    'sub7'
+    'sub001'
     };
 
 
