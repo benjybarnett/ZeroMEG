@@ -35,7 +35,7 @@ function rhos = RunRSA(cfg0,tl_data,des_mat)
     %% Load the Model RDM
     mRDM = load(fullfile(cfg0.mRDM_path,[cfg0.mRDM_file,'.mat']));
     mRDM = struct2cell(mRDM); mRDM = mRDM{1};  
-      idxs = itril(cfg0.num_predictors,-1); %indices of lower triangle without diagonal
+    idxs = itril(cfg0.num_predictors,-1); %indices of lower triangle without diagonal
     mRDM = mRDM(idxs);
 
     %% Correlate Neural RDM with Model RDM

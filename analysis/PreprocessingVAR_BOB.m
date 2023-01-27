@@ -10,14 +10,12 @@ PreprocData             = fullfile(cfg0.root,subject);
 %% Loop over data segments
 
 [~,name,~] = fileparts(cfg0.dataName);
-if cfg0.localizer == false
-    artSave    = ['art' name(5:end)];   
-else
-    artSave =  ['loc_art' name(5:end)];   
-end
-
+artSave    = ['art' name(5:end)];   
+   
 % load the data
-load(fullfile(PreprocData,cfg0.dataName),'data')
+data = load(fullfile(PreprocData,cfg0.dataName));
+data = struct2cell(data);
+data = data{1};
 
 % get some basic values
 time                    = data.time{1};
@@ -32,6 +30,7 @@ tmp_data.trialinfo      = [tmp_data.trialinfo, (1:nTrials)'];
 % Overall artifacts
 cfg                     = [];
 cfg.method              = 'summary';
+cfg.keeptrial = 'no';
 tmp_data_overall        = ft_rejectvisual(cfg, tmp_data); % save them
 removed_n_overall       = setdiff(1:nTrials, tmp_data_overall.trialinfo(:, end));
 clear tmp_data_overall;
@@ -52,10 +51,11 @@ for in = 1:length(tmp_data.trial)
     %change NaN back to NaN 
     tmp_data_filtered.trial{in}(iNan{in}) = nan;
 end
-
+cfg.keeptrial = 'no';
 tmp_data_muscle         = ft_rejectvisual([], tmp_data_filtered);
 removed_n_muscle        = setdiff(1:nTrials, tmp_data_muscle.trialinfo(:, end));
 clear tmp_data_muscle tmp_data_filtered;
+
 
 % Blinks during stimulus
 cfg                     = [];

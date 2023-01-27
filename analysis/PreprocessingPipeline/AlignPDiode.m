@@ -7,9 +7,11 @@ function dataMain = AlignPDiode(cfg0,data)
     % determine the onset of the visual stimulus
     visOnset = [];
     for iTrial = 1:length(lightDiodeSignal.trial)
+       
         PD_on = lightDiodeSignal.trial{iTrial} < (mean(lightDiodeSignal.trial{iTrial})-std(lightDiodeSignal.trial{iTrial})); %get when the PD is on (when is less than 1 SD below mean)
         PD_on_idx = find(PD_on);   
         visOnset(iTrial) = lightDiodeSignal.time{iTrial}(PD_on_idx(1));
+       
     end
     
     %figure;
@@ -19,6 +21,7 @@ function dataMain = AlignPDiode(cfg0,data)
     for i = 1:length(lightDiodeSignal.time)
         
         plot(lightDiodeSignal.time{i},lightDiodeSignal.trial{i})
+        %plot(data.time{i},data.trial{i}(314,:),'Color','cyan')
         hold on
     end
     xline(0,'r')
@@ -43,8 +46,11 @@ function dataMain = AlignPDiode(cfg0,data)
     figure;
     for i = 1:length(lightDiodeSignal.time)
         plot(lightDiodeSignal.time{i},lightDiodeSignal.trial{i})
+        %plot(dataMain.time{i},dataMain.trial{i}(314,:),'Color','cyan')
         hold on
     end
     xline(0,'r')
     title('Aligned Trials')
+
+    
 end

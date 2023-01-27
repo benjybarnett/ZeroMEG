@@ -1,4 +1,4 @@
-function [curves] = BehaviourAnalysis(cfg0,subject)
+function [curves,meanRTs] = BehaviourAnalysis(cfg0,subject)
 
     %% Load Data
     load(fullfile(cfg0.root,subject,'meg','trial_data','data.mat'));
@@ -52,10 +52,12 @@ function [curves] = BehaviourAnalysis(cfg0,subject)
     props = [propSame,propDifferent];
     labels = categorical({'Same', 'Different'});
     labels = reordercats(labels,{'Same', 'Different'});
+    if cfg0.plot
     figure;
     bar(labels,props,'FaceAlpha',0.3,'FaceColor', [1 0 0],'EdgeColor','None');
     ylabel('Percentage trials responded')
     ylim([0 70])
+    end
 
     %Tuning curves
     [zero_incorrect,one_incorrect,two_incorrect,three_incorrect,four_incorrect,five_incorrect] = GetIncorrects(num_data);
@@ -69,7 +71,11 @@ function [curves] = BehaviourAnalysis(cfg0,subject)
 
     curves = {zero_curve one_curve two_curve three_curve four_curve five_curve};
     
+    %RTs
+    [meanRTs,sdRTs] = GetRTs(num_data);
+
     %plot
+    if cfg0.plot
     figure;
     x = [0 1 2 3 4 5];
  
@@ -86,12 +92,10 @@ function [curves] = BehaviourAnalysis(cfg0,subject)
    % legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'});
     saveas(gcf,fullfile(outputDir,'numerical.png'))
     
-    %return
-    curves = [zero_curve; one_curve; two_curve; three_curve; four_curve; five_curve];
+   
    
     %RTs as distance between sample and test differs
     figure;
-    [meanRTs,sdRTs] = GetRTs(num_data);
     x =0:length(meanRTs)-1;
     bar(x,meanRTs);
     hold on
@@ -102,5 +106,8 @@ function [curves] = BehaviourAnalysis(cfg0,subject)
     hold off
     xlabel('Distance between sample and test number')
     ylabel('Mean RT (secs)')
-    
+    end
+
+     %return
+    curves = [zero_curve; one_curve; two_curve; three_curve; four_curve; five_curve];
 end

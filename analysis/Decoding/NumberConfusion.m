@@ -3,16 +3,18 @@ function NumberConfusion(cfg0,subject)
     %% Load MEG data
     disp('loading..')
     disp(subject)
-    num_data = load(fullfile(cfg0.root,'CleanData',subject,'num_data.mat'));
-    num_data = num_data.num_data;  
-    time = num_data.time{1};
+    dot_data = load(fullfile(cfg0.root,'CleanData',subject,'dot_trials.mat'));
+    dot_data = dot_data.dot_trials;
+    dot_time = dot_data.time{1};
+    disp('loaded data')
+    
+    arabic_data = load(fullfile(cfg0.root,'CleanData',subject,'arabic_trials.mat'));
+    arabic_data = arabic_data.arabic_trials;  
+    arabic_time = arabic_data.time{1};
     disp('loaded data')
     
     outputDir = fullfile(cfg0.root,cfg0.output_path,subject);
     if ~exist(outputDir,'dir'); mkdir(outputDir); end
-
-    %% Store class labels
-    num_labels = num_data.num_labels;
 
     %{
     %% Try Separate Stim Types
@@ -21,30 +23,48 @@ function NumberConfusion(cfg0,subject)
     num_data = ft_selectdata(cfg,num_data);
     num_labels = num_labels(num_data.trialinfo(:,13) == 2);
     %}
-    
+
+    %% Select Sample Dot Stims
+    cfgS = [];
+    cfgS.trials = dot_data.trialinfo(:,4) == 1;
+    dot_data = ft_selectdata(cfgS,dot_data);
+
+    %% Remove No Resp Trials
+    cfgS = [];
+    cfgS.trials = dot_data.trialinfo(:,8) ~= 0;
+    dot_data = ft_selectdata(cfgS,dot_data);
+    cfgS.trials = arabic_data.trialinfo(:,6) ~= 0;
+    arabic_data = ft_selectdata(cfgS,arabic_data);
+
     %% Get Trial x Channels x Time Matrix
     cfgS = [];
     cfgS.keeptrials = true;
     cfgS.channel=cfg0.channel;
-    num_data = ft_timelockanalysis(cfgS,num_data);
-    
+    %cfgS.latency = [-0.075 0.8];
+    dot_data_TL = ft_timelockanalysis(cfgS,dot_data);
+    arabic_data_TL = ft_timelockanalysis(cfgS,arabic_data);
 
     %% Decode
     cfg = [] ;
     cfg.method          = 'mvpa';
     cfg.latency         = cfg0.timepoints;
     cfg.avgovertime     = 'yes';
-    cfg.design          = num_labels;
+    cfg.design          = dot_data_TL.trialinfo(:,5);
+    cfg.design = cfg.design(randperm(length(cfg.design)));
     cfg.features        = 'chan';
     cfg.mvpa            = [];
     cfg.mvpa.classifier = 'multiclass_lda';
     cfg.mvpa.metric     = 'conf';
     cfg.mvpa.k          = 5;
-    conf = ft_timelockstatistics(cfg, num_data);
+    conf_dots = ft_timelockstatistics(cfg, dot_data_TL);
 
+    cfg.design          = arabic_data_TL.trialinfo(:,4);
+    conf_arabic = ft_timelockstatistics(cfg, arabic_data_TL);
     %% Save
     if ~exist(outputDir,'dir'); mkdir(outputDir); end 
-    save(fullfile(outputDir,cfg0.outputName),'conf','-v7.3');
+    save(fullfile(outputDir,[cfg0.outputName,'_dots']),'conf_dots','-v7.3');
+    save(fullfile(outputDir,[cfg0.outputName,'_arabic']),'conf_arabic','-v7.3');
+
     disp('saving....')
 
 end

@@ -7,8 +7,8 @@ function  plot_mean_RSA(cfg, subjects)
     end
 
     %% Load Data
-    load('time_axis.mat');
-    time = t;
+    load('dot_time.mat');
+    time = dot_time;
     all_rho = zeros(length(subjects),length(time));
 
     for subj =1:length(subjects)
