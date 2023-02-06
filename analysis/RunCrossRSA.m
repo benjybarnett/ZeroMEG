@@ -1,7 +1,8 @@
-function rhos = RunRSA(cfg0,tl_data,des_mat)
+function rhos = RunCrossRSA(cfg0,tl_data,des_mat)
 %Function runs an RSA across time using the timelocked data (trials x channels x time) 
 %and trial design matrix (trials x condition) with dummy coded predictors
 %(i.e. 1 in condition column when trial is an instance of that condition)
+%Specifically for cross condition RSA, where we want the lower quarter of the full rdm.
 
     %% Get Betas for RSA
 
@@ -35,15 +36,16 @@ function rhos = RunRSA(cfg0,tl_data,des_mat)
     %% Load the Model RDM
     mRDM = load(fullfile(cfg0.mRDM_path,[cfg0.mRDM_file,'.mat']));
     mRDM = struct2cell(mRDM); mRDM = mRDM{1};  
-    idxs = itril(cfg0.num_predictors,-1); %indices of lower triangle without diagonal
-    mRDM = mRDM(idxs);
-    disp(size(mRDM))
+    mRDM = mRDM(end-cfg0.num_predictors+1:end,1:cfg0.num_predictors);% get lower left quadrant (i.e. cross-condition section)
+    mRDM = mRDM(:);
+
 
     %% Correlate Neural RDM with Model RDM
     rhos = [];
     for n = 1:size(nRDMs,3)
         nRDM = smoothnRDMs(:,:,n);
-        nRDM = nRDM(idxs);   
+        nRDM = nRDM(end-cfg0.num_predictors+1:end,1:cfg0.num_predictors);% get lower left quadrant (i.e. cross-condition section)
+        nRDM = nRDM(:);
         rho = corr(nRDM,mRDM,'Type','Kendall');
         rhos = [rhos rho];
     end

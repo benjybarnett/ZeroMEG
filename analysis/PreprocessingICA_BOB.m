@@ -6,13 +6,13 @@ outputComp              = fullfile(cfg0.datadir,'ICAData',subject);
 outputData             = fullfile(cfg0.datadir,'CleanData',subject);
 if ~exist(outputComp,'dir'); mkdir(outputComp); end
 if ~exist(outputData,'dir'); mkdir(outputData); end
-VARData             =  fullfile(cfg0.datadir,'VARData',subject);
+VARData             =  fullfile(cfg0.datadir,'VARData',subject); 
 
 %% ICA
 
 % load the VA removed data
 data = load(fullfile(VARData,cfg0.inputData));
-data = data.data;
+data = struct2cell(data);data = data{1};
 
 comp_output = strcat(cfg0.compOutput,'.mat');
 

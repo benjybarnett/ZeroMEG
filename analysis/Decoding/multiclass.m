@@ -105,7 +105,8 @@ if cfg0.plot
     
     c_min = min([min(within_arabic_acc,[],'all'),min(within_dot_acc,[],'all')])-0.05;
     c_max = max([max(within_arabic_acc,[],'all'),max(within_dot_acc,[],'all')])+0.05;
-
+    
+   
     figure('units','normalized','outerposition',[0 0 1 1])
 
     subplot(1,2,1)

@@ -80,6 +80,7 @@ removed_n_blinks        = tmp_data.trialinfo(any(stimOnMask & blinkMask, 2), end
 
 clear tmp_data blinkMask stimOnMask
 
+
 % Inspect potentially contaminated trials
 cfg                     = [];
 cfg.channel             = 'MEG';

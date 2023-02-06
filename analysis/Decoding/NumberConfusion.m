@@ -50,7 +50,7 @@ function NumberConfusion(cfg0,subject)
     cfg.latency         = cfg0.timepoints;
     cfg.avgovertime     = 'yes';
     cfg.design          = dot_data_TL.trialinfo(:,5);
-    cfg.design = cfg.design(randperm(length(cfg.design)));
+    %cfg.design = cfg.design(randperm(length(cfg.design)));
     cfg.features        = 'chan';
     cfg.mvpa            = [];
     cfg.mvpa.classifier = 'multiclass_lda';

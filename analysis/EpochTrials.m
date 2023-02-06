@@ -69,6 +69,7 @@ arabic_trials.trialnumbers = (1:length(arabic_trials.trial))';
 
 save(fullfile(saveDir,cfg0.arabicSaveName),'arabic_trials','-v7.3')
 
+
 clear trl arabic_trials arabic_data lightDiodeSignal
 
 %% Dots
@@ -124,7 +125,7 @@ ylabel('Photodiode Signal')
 
 % We don't baseline correct because we might want to look at development of activation from sample to test
 
-%Pivot the trialinfo. Columns: Run, trial number, task, stim-set, sample-or-test, numerosity, match trial, response, RT, correct
+%Pivot the trialinfo. Columns: Run, trial number, task,  sample-or-test, numerosity,stim-set, match trial, response, RT, correct
 dot_trials.trialinfo    = pivotTrialsDots(dot_trials.trialinfo);
 % add trialnumbers for later
 dot_trials.trialnumbers = (1:length(dot_trials.trial))';

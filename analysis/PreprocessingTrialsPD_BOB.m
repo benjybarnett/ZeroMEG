@@ -19,7 +19,7 @@ cfgS                        = [];
 cfgS.continuous             = 'yes';
 cfgS.dftfilter              = 'yes';
 cfgS.demean                 = 'yes'; % baseline correction on 200 ms before stim 
-cfgS.baselinewindow         = [cfg0.prestimArabic 0];
+cfgS.baselinewindow         = [-cfg0.prestimArabic 0];
 %cfgS.padding                = 10;
 
 
@@ -89,7 +89,7 @@ cfgS                        = [];
 cfgS.continuous             = 'yes';
 cfgS.dftfilter              = 'yes';
 cfgS.demean                 = 'yes'; % baseline correction on 
-cfgS.baselinewindow         = [cfg0.prestimDot 0];
+cfgS.baselinewindow         = [-cfg0.prestimDot 0];
 
 %% Load behavioural data for trial info
 trialInfo = load(fullfile(cfg0.datadir,subject,'meg','trial_data','data.mat'));
