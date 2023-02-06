@@ -14,6 +14,7 @@ addpath('PreprocessingPipeline\')
 addpath('D:\bbarnett\Documents\Zero\fieldtrip-master-MVPA\')
 addpath('D:/bbarnett/Documents/ecobrain/MVPA-Light\startup')
 addpath('D:/bbarnett/Documents/Zero/liblinear-master/')
+addpath('D:/bbarnett/Documents/Zero/liblinear-master/matlab')
 addpath('C:\Users\bbarnett\AppData\Local\JAGS\JAGS-3.4.0\x64\bin')
 
 %% Set deaults
