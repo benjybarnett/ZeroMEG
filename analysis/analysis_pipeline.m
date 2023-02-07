@@ -172,7 +172,7 @@ for subj = 1:length(subjects)
     cfg.arabic_output_folder = 'arabic';
     cfg.outputName = 'RSA_over_time.mat';
     cfg.channels = 'MEG';
-    cfg.plot = true;
+    cfg.plot = false;
     RSA_Zero(cfg,subject);
 end
 % Plot
@@ -200,7 +200,7 @@ for subj = 1:length(subjects)
     cfg.nMeanS = 7;
     cfg.metric = {'acc','conf'};
     cfg.output_prefix =  {'within_arabic_','within_dot_'}; %must be number data first
-    cfg.plot = true;
+    cfg.plot = false;
     cfg.channel = 'MEG';
     multiclass(cfg,subject);
     
