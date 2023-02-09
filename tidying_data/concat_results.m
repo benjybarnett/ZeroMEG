@@ -1,5 +1,5 @@
 clear all;
-subj = 'sub003';
+subj = 'sub004';
 data_dir = 'D:\bbarnett\Documents\Zero\data\Raw';
 files = dir(fullfile(data_dir,subj,'meg','trial_data','*.mat'));
 

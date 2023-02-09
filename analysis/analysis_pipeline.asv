@@ -22,13 +22,14 @@ ft_defaults;
 startup_MVPA_Light
 
 %% Zero Project Analysis
-subjects = {
+all_subjects = {
     'sub001'
     %'sub002' %removed for sleeping and moving
     'sub003'
+    'sub004'
 
     };
-
+subjects={'sub004'};
 
 
 %% Behavioural
@@ -73,7 +74,7 @@ for subj = 1:length(subjects)
     cfg = [];
     cfg.root = 'D:\bbarnett\Documents\Zero\data\PreprocData';
     cfg.datadir = 'D:\bbarnett\Documents\Zero\data';
-    cfg.stimOn = [0 3.5];
+    cfg.stimOn = [0 0]; %dont look for blinks as too long a trial, one blink doesnt ruin whole trial
     cfg.dataName = 'arabic_data_preproc';
     cfg.saveName = 'arabic_data_VAR';
     PreprocessingVAR_BOB(cfg,subject);
@@ -117,26 +118,6 @@ for subj = 1:length(subjects)
 end
 
 
-%% Eyeball Preprocessed Data
-for subj = 1:length(subjects)
-
-    %eyeball arabic task
-    subject = subjects{subj};
-    cfg = [];
-    cfg.datadir = 'D:\bbarnett\Documents\Zero\data';
-    cfg.trials = 'all';
-    cfg.channel = 'meg';
-    cfg.file_name = 'arabic_data';
-    cfg.layout = 'CTF275.lay';
-    cfg.datatype = 'CleanData';
-    EyeballData(cfg,subject);
-
-    %eyeball numerical task
-    cfg.file_name = 'dot_data';
-    EyeballData(cfg,subject);
-end
-
-
 %% Split into smaller epochs
 for subj = 1:length(subjects)
     subject = subjects{subj};
@@ -156,6 +137,24 @@ for subj = 1:length(subjects)
 
 end
 
+%% Eyeball Preprocessed Data
+for subj = 1:length(all_subjects)
+
+    %eyeball arabic task
+    subject = all_subjects{subj};
+    cfg = [];
+    cfg.datadir = 'D:\bbarnett\Documents\Zero\data';
+    cfg.trials = 'all';
+    cfg.channel = 'meg';
+    cfg.file_name = 'arabic_trials';
+    cfg.layout = 'CTF275.lay';
+    cfg.datatype = 'CleanData';
+    EyeballData(cfg,subject);
+
+    %eyeball numerical task
+    cfg.file_name = 'dot_trials';
+    EyeballData(cfg,subject);
+end
 
 %% SANITY CHECKS %%
 
@@ -185,7 +184,7 @@ for m = 1:length(models)
     cfg.shadecolor = cfg.linecolor;
     cfg.mRDM_file = model;
     cfg.ylim = [-0.4 1];
-    plot_mean_RSA(cfg,subjects)
+    plot_mean_RSA(cfg,all_subjects)
     hold on
 end
 
@@ -200,7 +199,7 @@ for subj = 1:length(subjects)
     cfg.nMeanS = 7;
     cfg.metric = {'acc','conf'};
     cfg.output_prefix =  {'within_arabic_','within_dot_'}; %must be number data first
-    cfg.plot = true;
+    cfg.plot = false;
     cfg.channel = 'MEG';
     multiclass(cfg,subject);
     
@@ -211,7 +210,7 @@ cfg.figName = cfg.accFile;
 cfg.ylim = [0 0.5];
 cfg.clim = [0.0 0.5];
 cfg.decoding_type = 'within';
-plot_multiclass_temp(cfg,subjects);
+plot_multiclass_temp(cfg,all_subjects);
 
 
 %% Representation of Number: Confusion Matrix
@@ -226,7 +225,7 @@ for subj = 1:length(subjects)
     cfg.channel = {'MEG'};
     NumberConfusion(cfg,subject);
 end
-meanNumberConfusion(cfg,subjects);
+meanNumberConfusion(cfg,all_subjects);
 
 %Dots Control
 for subj = 1:length(subjects)
@@ -251,7 +250,7 @@ cfg.mRDM_file = model;
 cfg.task = 'dots';
 cfg.ylim = [-0.4 1];
 cfg.title = 'Dot Stim-Set Control';
-plot_mean_control_RSA(cfg,subjects)
+plot_mean_control_RSA(cfg,all_subjects)
 
 % Arabic Control
 for subj = 1:length(subjects)
@@ -274,7 +273,9 @@ cfg.mRDM_file = model;
 cfg.ylim = [-0.4 1];
 cfg.task = 'arabic';
 cfg.title = 'Arabic Colour Control';
-plot_mean_control_RSA(cfg,subjects)
+plot_mean_control_RSA(cfg,all_subjects)
+
+
 
 
 %% END SANITY CHECKS

@@ -8,6 +8,13 @@ if ~exist(saveDir,'dir'); mkdir(saveDir); end
 %% Arabic Datasets 
 data = load(fullfile(cfg0.datadir,subject,'arabic_data.mat'));
 data = struct2cell(data); arabic_data = data{1};
+
+%{
+%for sub004, block 1 comes out with NaNs because PD signal so weak can't epoch properly
+cfg = [];
+cfg.trials = arabic_data.trialinfo(:,1) ~= 1;
+arabic_data = ft_selectdata(cfg,arabic_data);
+%}
 %% Create new trl matrix
 
 % Get photodiode signal
@@ -75,6 +82,13 @@ clear trl arabic_trials arabic_data lightDiodeSignal
 %% Dots
 data = load(fullfile(cfg0.datadir,subject,'dot_data.mat'));
 data = struct2cell(data); dot_data = data{1};
+
+%{
+%for sub004, block 1 comes out with NaNs because PD signal so weak can't epoch properly
+cfg = [];
+cfg.trials = dot_data.trialinfo(:,1) ~= 1;
+dot_data = ft_selectdata(cfg,dot_data);
+%}
 
 %% Create new trl matrix
 

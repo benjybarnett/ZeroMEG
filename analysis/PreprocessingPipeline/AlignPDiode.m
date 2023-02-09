@@ -23,9 +23,11 @@ function dataMain = AlignPDiode(cfg0,data)
         plot(lightDiodeSignal.time{i},lightDiodeSignal.trial{i})
         %plot(data.time{i},data.trial{i}(314,:),'Color','cyan')
         hold on
+        
     end
     xline(0,'r')
     title('Unaligned Trials')
+   
 
     % realign the trials to this onset
     cfg = [];
@@ -52,5 +54,6 @@ function dataMain = AlignPDiode(cfg0,data)
     xline(0,'r')
     title('Aligned Trials')
 
+    clear lightDiodeSignal visOnset
     
 end

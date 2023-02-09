@@ -56,7 +56,7 @@ for d = 1:nDataSets
     cfg.poststim = cfg0.poststimArabic;
     dataS{d} = AlignPDiode(cfg,data);
     clear data
-    
+    break
     
 end
 
@@ -78,6 +78,10 @@ arabic_data                        = ft_resampledata(cfg, arabic_data); % resamp
 arabic_data = fixsampleinfo(arabic_data);
 arabic_data = rmfield(arabic_data, 'cfg');
 
+% for subjects who have one or two trials where photodiode goes mad at end of trial %
+%cfg = [];
+%cfg.trials = arabic_data.trialnumbers(:,1) ~= 35 & arabic_data.trialnumbers(:,1) ~= 105;
+%carabic_data = ft_selectdata(cfg,arabic_data);
 
 % save and clean up
 save(fullfile(saveDir,['arabic_',cfg0.saveName]),'arabic_data','-v7.3')

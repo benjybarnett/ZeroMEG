@@ -58,27 +58,29 @@ clear tmp_data_muscle tmp_data_filtered;
 
 
 % Blinks during stimulus
-cfg                     = [];
-cfg.channel             = {'UADC001','UADC003'}; %eye tracker X, pupil diameter
-tmp_data                = ft_selectdata(cfg, data);
-tmp_data.trialinfo      = [tmp_data.trialinfo, (1:nTrials)'];
-
-X = reshape(cell2mat(tmp_data.trial), [2, length(tmp_data.time{1}), length(tmp_data.trial)]);
-X_EOGv = squeeze(X(1, :, :))';
-X_EOGv = (X_EOGv - mean(X_EOGv(:))) ./ std(X_EOGv(:)); %z score standardise
-X_pupDil = squeeze(X(2, :, :))';
-X_pupDil = (X_pupDil - mean(X_pupDil(:))) ./ std(X_pupDil(:)); % z score 
-
-cutoff_z_EOGv = mean(X_EOGv(:))+(2*std(X_EOGv(:))); %cut off is 2 SD +- the mean
-cutoff_z_pupDil = mean(X_pupDil(:))+(2*std(X_pupDil(:)));%cut off is 2 SD +- the mean
-
-%indexes where signal is greater than cutoff
-blinkMask               = (abs(X_EOGv) > cutoff_z_EOGv) | (abs(X_pupDil) > cutoff_z_pupDil);
-tmp                     = time >= cfg0.stimOn(1) & time <= cfg0.stimOn(2); %where blinks co occur with stimulus
-stimOnMask              = repmat(tmp,[nTrials,1]);
-removed_n_blinks        = tmp_data.trialinfo(any(stimOnMask & blinkMask, 2), end);
-
-clear tmp_data blinkMask stimOnMask
+if ~contains(cfg0.dataName,'arabic')
+    cfg                     = [];
+    cfg.channel             = {'UADC001','UADC003'}; %eye tracker X, pupil diameter
+    tmp_data                = ft_selectdata(cfg, data);
+    tmp_data.trialinfo      = [tmp_data.trialinfo, (1:nTrials)'];
+    
+    X = reshape(cell2mat(tmp_data.trial), [2, length(tmp_data.time{1}), length(tmp_data.trial)]);
+    X_EOGv = squeeze(X(1, :, :))';
+    X_EOGv = (X_EOGv - mean(X_EOGv(:))) ./ std(X_EOGv(:)); %z score standardise
+    X_pupDil = squeeze(X(2, :, :))';
+    X_pupDil = (X_pupDil - mean(X_pupDil(:))) ./ std(X_pupDil(:)); % z score 
+    
+    cutoff_z_EOGv = mean(X_EOGv(:))+(2*std(X_EOGv(:))); %cut off is 2 SD +- the mean
+    cutoff_z_pupDil = mean(X_pupDil(:))+(2*std(X_pupDil(:)));%cut off is 2 SD +- the mean
+    
+    %indexes where signal is greater than cutoff
+    blinkMask               = (abs(X_EOGv) > cutoff_z_EOGv) | (abs(X_pupDil) > cutoff_z_pupDil);
+    tmp                     = time >= cfg0.stimOn(1) & time <= cfg0.stimOn(2); %where blinks co occur with stimulus
+    stimOnMask              = repmat(tmp,[nTrials,1]);
+    removed_n_blinks        = tmp_data.trialinfo(any(stimOnMask & blinkMask, 2), end);
+    
+    clear tmp_data blinkMask stimOnMask
+end
 
 
 % Inspect potentially contaminated trials
@@ -87,7 +89,9 @@ cfg.channel             = 'MEG';
 cfg.megscale = 1;
 cfg.artfctdef.overall.artifact = data.sampleinfo(removed_n_overall, :);
 cfg.artfctdef.muscle.artifact = data.sampleinfo(removed_n_muscle, :);
-cfg.artfctdef.blinks.artifact = data.sampleinfo(removed_n_blinks, :);    
+if ~contains(cfg0.dataName,'arabic')
+    cfg.artfctdef.blinks.artifact = data.sampleinfo(removed_n_blinks, :);    
+end
 cfg.preproc.hpfilter    = 'no';
 cfg.preproc.hpfreq      = 100;
 cfg.renderer            = 'painters';

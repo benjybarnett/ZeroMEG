@@ -11,7 +11,8 @@ function EyeballData(cfg,subject)
     tl_data = ft_timelockanalysis(cfg,data);
     figure; imagesc(tl_data.avg); xticklabels(tl_data.time(1):0.2:tl_data.time(end)); xticks(linspace(1,size(tl_data.time,2),numel(xticklabels)));
     %title(strcat(subject, ' ',cfg.file_name));
-   
+    hold on;
+    line([find(tl_data.time==0),find(tl_data.time==0)], [0,300], 'Color', 'r');
     figure; ft_topoplotER(cfg,tl_data); %title(strcat(subject, ' ',cfg.file_name));
 
 
