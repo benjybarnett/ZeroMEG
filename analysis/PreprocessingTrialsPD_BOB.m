@@ -56,7 +56,7 @@ for d = 1:nDataSets
     cfg.poststim = cfg0.poststimArabic;
     dataS{d} = AlignPDiode(cfg,data);
     clear data
-    break
+    
     
 end
 

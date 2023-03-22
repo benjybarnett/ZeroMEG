@@ -15,6 +15,7 @@ cfg = [];
 cfg.trials = arabic_data.trialinfo(:,1) ~= 1;
 arabic_data = ft_selectdata(cfg,arabic_data);
 %}
+
 %% Create new trl matrix
 
 % Get photodiode signal
@@ -61,11 +62,13 @@ title('Arabic Trials')
 xlabel('Time')
 ylabel('Photodiode Signal')
 
+
 % Baseline Correct
 cfgS                        = [];
 cfgS.demean                 = 'yes'; % baseline correction on 75 ms before stim 
-cfgS.baselinewindow         = [-0.075 0];
+cfgS.baselinewindow         = [-0.1 0];
 arabic_trials          = ft_preprocessing(cfgS,arabic_trials);
+
 
 %Pivot the trialinfo. Columns: Run, trial number, task, numeral, colour, response, RT, correct
 arabic_trials.trialinfo    = pivotTrialsArabic(arabic_trials.trialinfo);
@@ -80,6 +83,7 @@ save(fullfile(saveDir,cfg0.arabicSaveName),'arabic_trials','-v7.3')
 clear trl arabic_trials arabic_data lightDiodeSignal
 
 %% Dots
+
 data = load(fullfile(cfg0.datadir,subject,'dot_data.mat'));
 data = struct2cell(data); dot_data = data{1};
 

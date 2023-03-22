@@ -22,14 +22,17 @@ ft_defaults;
 startup_MVPA_Light
 
 %% Zero Project Analysis
-all_subjects = {
+subjects = {
     'sub001'
-    %'sub002' %removed for sleeping and moving
+    'sub002' 
     'sub003'
     'sub004'
-
+    'sub005'
+    'sub006'
+    %'sub007' %Removed for sleeping and 48% accuracy on arabic task
+    'sub008'
+    'sub009'
     };
-subjects={'sub004'};
 
 
 %% Behavioural
@@ -130,7 +133,7 @@ for subj = 1:length(subjects)
     cfg.arabicSaveName = 'arabic_trials.mat';
     cfg.dotSaveName = 'dot_trials.mat';
     cfg.arabic_poststim = 0.8;
-    cfg.arabic_prestim = 0.075;
+    cfg.arabic_prestim = 0.1;
     cfg.dot_poststim = 0.8;
     cfg.dot_prestim = 0.2;
     EpochTrials(cfg,subject);
@@ -138,10 +141,10 @@ for subj = 1:length(subjects)
 end
 
 %% Eyeball Preprocessed Data
-for subj = 1:length(all_subjects)
+for subj = 1:length(subjects)
 
     %eyeball arabic task
-    subject = all_subjects{subj};
+    subject = subjects{subj};
     cfg = [];
     cfg.datadir = 'D:\bbarnett\Documents\Zero\data';
     cfg.trials = 'all';
@@ -159,8 +162,8 @@ end
 %% SANITY CHECKS %%
 
 %% Representations of Zero RSA
-for subj = 1:length(subjects)
-    subject = subjects{subj};
+for subj = 1:length(all_subjects)
+    subject = all_subjects{subj};
     cfg  = [];
     cfg.root = 'D:\bbarnett\Documents\Zero\data';
     cfg.mRDM_path ='D:\bbarnett\Documents\Zero\scripts\ZeroMEG\analysis';
@@ -171,7 +174,7 @@ for subj = 1:length(subjects)
     cfg.arabic_output_folder = 'arabic';
     cfg.outputName = 'RSA_over_time.mat';
     cfg.channels = 'MEG';
-    cfg.plot = true;
+    cfg.plot = false;
     RSA_Zero(cfg,subject);
 end
 % Plot
@@ -184,14 +187,14 @@ for m = 1:length(models)
     cfg.shadecolor = cfg.linecolor;
     cfg.mRDM_file = model;
     cfg.ylim = [-0.4 1];
-    plot_mean_RSA(cfg,all_subjects)
+    plot_mean_RSA(cfg,subjects)
     hold on
 end
 
 
 %% Within Condition Multiclass Decoding
-for subj = 1:length(subjects)
-    subject = subjects{subj};
+for subj = 1:length(all_subjects)
+    subject = all_subjects{subj};
     cfg  = [];
     cfg.root = 'D:\bbarnett\Documents\Zero\data';
     cfg.output_path = 'Analysis/MEG/Multiclass_Decoding/OverTime';
@@ -210,22 +213,22 @@ cfg.figName = cfg.accFile;
 cfg.ylim = [0 0.5];
 cfg.clim = [0.0 0.5];
 cfg.decoding_type = 'within';
-plot_multiclass_temp(cfg,all_subjects);
+plot_multiclass_temp(cfg,subjects);
 
 
 %% Representation of Number: Confusion Matrix
-for subj = 1:length(subjects)
-    subject = subjects{subj};
+for subj = 1:length(all_subjects)
+    subject = all_subjects{subj};
     cfg  = [];
     cfg.root = 'D:\bbarnett\Documents\Zero\data';
 
     cfg.output_path = 'Analysis/MEG/Multiclass_Decoding/TimeAveraged';
     cfg.outputName = 'number_confusion';
-    cfg.timepoints = [0.1 0.3];
+    cfg.timepoints = [0.35 0.6];
     cfg.channel = {'MEG'};
     NumberConfusion(cfg,subject);
 end
-meanNumberConfusion(cfg,all_subjects);
+meanNumberConfusion(cfg,subjects);
 
 %Dots Control
 for subj = 1:length(subjects)
@@ -253,27 +256,7 @@ cfg.title = 'Dot Stim-Set Control';
 plot_mean_control_RSA(cfg,all_subjects)
 
 % Arabic Control
-for subj = 1:length(subjects)
-    subject = subjects{subj};
-    cfg  = [];
-    cfg.root = 'D:\bbarnett\Documents\Zero\data';
-    cfg.mRDM_path ='D:\bbarnett\Documents\Zero\scripts\ZeroMEG\analysis';
-    cfg.mRDM_file = 'arabic_control_rdm';
-    cfg.num_predictors = 6;
-    cfg.output_path = 'Analysis/MEG/RSA/Controls/Arabic';
-    cfg.outputName = 'RSA_over_time.mat';
-    cfg.channels = 'MEG';
-    RSA_ArabicControl(cfg,subject);
-end
-% Plot
-model = 'arabic_control_rdm';
-cfg.linecolor = {'blue'};
-cfg.shadecolor = cfg.linecolor;
-cfg.mRDM_file = model;
-cfg.ylim = [-0.4 1];
-cfg.task = 'arabic';
-cfg.title = 'Arabic Colour Control';
-plot_mean_control_RSA(cfg,all_subjects)
+.
 
 
 

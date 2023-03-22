@@ -8,14 +8,14 @@ function  plot_mean_RSA(cfg, subjects)
 
     %% Load Data
     load('dot_time.mat');
-    dot_cut_off = 31; %38th sample
+    dot_cut_off = 38; %38th sample
     dot_time = dot_time(dot_cut_off:end);
 
     load('arabic_time.mat');
 
     for subj =1:length(subjects)
         subject = subjects{subj};
-        disp(subject)
+        
         load(fullfile(cfg.root,cfg.output_path,subject,'arabic','rhos_no_diag.mat'));
         all_arabic_rho(subj,:) = arabic_rhos;
 
@@ -39,8 +39,10 @@ function  plot_mean_RSA(cfg, subjects)
     upperCI = mean_arabic_rho+arabic_CIs;
     lowerCI =mean_arabic_rho-arabic_CIs;
     x = [arabic_time, fliplr(arabic_time)];
+    disp(size(x))
     
     inBetween = [upperCI, fliplr(lowerCI)];
+    disp(size(inBetween))
     fill(x, inBetween,'b', 'FaceColor',cfg.shadecolor{1},'FaceAlpha','0.2','EdgeAlpha','0.2','EdgeColor','none');
     hold on;
     plot(arabic_time, mean_arabic_rho,'Color', cfg.linecolor{1}, 'LineWidth', 1);
