@@ -32,6 +32,7 @@ subjects = {
     %'sub007' %Removed for sleeping and 48% accuracy on arabic task
     'sub008'
     'sub009'
+    'sub010'
     };
 
 
@@ -256,9 +257,27 @@ cfg.title = 'Dot Stim-Set Control';
 plot_mean_control_RSA(cfg,all_subjects)
 
 % Arabic Control
-.
-
-
+for subj = 1:length(subjects)
+    subject = subjects{subj};
+    cfg  = [];
+    cfg.root = 'D:\bbarnett\Documents\Zero\data';
+    cfg.mRDM_path ='D:\bbarnett\Documents\Zero\scripts\ZeroMEG\analysis';
+    cfg.mRDM_file = 'arabic_control_rdm';
+    cfg.num_predictors = 6;
+    cfg.output_path = 'Analysis/MEG/RSA/Controls/Arabic';
+    cfg.outputName = 'RSA_over_time.mat';
+    cfg.channels = 'MEG';
+    RSA_ArabicControl(cfg,subject);
+end
+% Plot
+model = 'arabic_control_rdm';
+cfg.linecolor = {'blue'};
+cfg.shadecolor = cfg.linecolor;
+cfg.mRDM_file = model;
+cfg.ylim = [-0.4 1];
+cfg.task = 'arabic';
+cfg.title = 'Arabic Colour Control';
+plot_mean_control_RSA(cfg,subjects)
 
 
 %% END SANITY CHECKS

@@ -156,13 +156,12 @@ end
 grandavg = ft_sourcegrandaverage(cfg, all_subjects(1),all_subjects(2),all_subjects(3),all_subjects(4),...
     all_subjects(5),all_subjects(6),all_subjects(7),all_subjects(8),all_subjects(9));
 
-grandavg.mask = grandavg.pow > max(grandavg.pow(:))*.7; % 30 % of maximum
+grandavg.mask = grandavg.pow > max(grandavg.pow(:))*.3; % 30 % of maximum
 
 cfg               = [];
 cfg.method        = 'surface';
 cfg.funparameter  = 'pow';
 cfg.funcolormap = 'jet';
-cfg.maskparameter = 'mask';
 ft_sourceplot(cfg, grandavg);
 
 

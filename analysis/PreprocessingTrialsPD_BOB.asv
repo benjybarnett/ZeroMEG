@@ -55,8 +55,8 @@ for d = 1:nDataSets
     cfg.prestim = cfg0.prestimArabic;
     cfg.poststim = cfg0.poststimArabic;
     dataS{d} = AlignPDiode(cfg,data);
-    clear data
-    
+    %clear data
+    break
     
 end
 
