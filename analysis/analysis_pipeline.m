@@ -33,6 +33,7 @@ subjects = {
     'sub008'
     'sub009'
     'sub010'
+    'sub011'
     };
 
 
@@ -203,7 +204,7 @@ for subj = 1:length(all_subjects)
     cfg.nMeanS = 7;
     cfg.metric = {'acc','conf'};
     cfg.output_prefix =  {'within_arabic_','within_dot_'}; %must be number data first
-    cfg.plot = false;
+    cfg.plot = true;
     cfg.channel = 'MEG';
     multiclass(cfg,subject);
     

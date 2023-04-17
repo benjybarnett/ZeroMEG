@@ -34,7 +34,7 @@ function meanNumberConfusion(cfg0,subjects)
     colormap(jet(512))
     xtick = [0,1,2,3,4,5];
     ytick = [0,1,2,3,4,5];
-    set(gca,  'XTickLabel',xtick,'YTickLabel',ytick)   
+    set(gca, 'XTick',xtick+1, 'XTickLabel',xtick,'YTickLabel',ytick)   
     ylabel('True Class')
     xlabel('Predicted Class')
     a = colorbar;
@@ -46,7 +46,7 @@ function meanNumberConfusion(cfg0,subjects)
     colormap(jet(512))
     xtick = [0,1,2,3,4,5];
     ytick = [0,1,2,3,4,5];
-    set(gca,  'XTickLabel',xtick,'YTickLabel',ytick)   
+    set(gca, 'XTick',xtick+1, 'XTickLabel',xtick,'YTickLabel',ytick)   
     ylabel('True Class')
     xlabel('Predicted Class')
     a = colorbar;
@@ -54,12 +54,12 @@ function meanNumberConfusion(cfg0,subjects)
         text(8,0.05,'NUMERALS');
 
     %% Create MEG Tuning Curves
-    zero = mean_dot_conf(1,:);
-    one = mean_dot_conf(2,:);
-    two = mean_dot_conf(3,:);
-    three = mean_dot_conf(4,:);
-    four = mean_dot_conf(5,:);
-    five = mean_dot_conf(6,:);
+    zero = mean_dot_conf(:,1);
+    one = mean_dot_conf(:,2);
+    two = mean_dot_conf(:,3);
+    three = mean_dot_conf(:,4);
+    four = mean_dot_conf(:,5);
+    five = mean_dot_conf(:,6);
 
     curves = {zero one two three four five};
     
@@ -72,20 +72,20 @@ function meanNumberConfusion(cfg0,subjects)
         curve = curves{cl};
         plot(x,curve,'Color',colors{cl},'LineWidth' , 2)
         xticks([0 1 2 3 4 5]);
-        ylabel('Prop. Predicted as True Number')
-        xlabel('Predicted Number')
+        ylabel('Prop. Predicted')
+        xlabel('True Number')
         
         hold on
     end
     legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'}); %true classes
    
     %% Create MEG Tuning Curves
-    zero = mean_arab_conf(1,:);
-    one = mean_arab_conf(2,:);
-    two = mean_arab_conf(3,:);
-    three = mean_arab_conf(4,:);
-    four = mean_arab_conf(5,:);
-    five = mean_arab_conf(6,:);
+    zero = mean_arab_conf(:,1);
+    one = mean_arab_conf(:,2);
+    two = mean_arab_conf(:,3);
+    three = mean_arab_conf(:,4);
+    four = mean_arab_conf(:,5);
+    five = mean_arab_conf(:,6);
 
     curves = {zero one two three four five};
     
@@ -98,8 +98,8 @@ function meanNumberConfusion(cfg0,subjects)
         curve = curves{cl};
         plot(x,curve,'Color',colors{cl},'LineWidth' , 2)
         xticks([0 1 2 3 4 5]);
-        ylabel('Prop. Predicted as True Number')
-        xlabel('Predicted Number')
+        ylabel('Prop. Predicted')
+        xlabel('True Number')
         
         hold on
     end
