@@ -8,8 +8,11 @@ addpath(genpath('Utilities'))
 addpath('D:\bbarnett\Documents\Zero\HMeta-d-master\Matlab')
 addpath('D:\bbarnett\Documents\Zero\HMeta-d-master\CPC_metacog_tutorial\cpc_metacog_utils')
 addpath('Decoding')
+addpath('SourceRecon')
 addpath('Decoding\plotting')
 addpath('PreprocessingPipeline\')
+addpath(genpath('warping_scripts'))
+
 
 addpath('D:\bbarnett\Documents\Zero\fieldtrip-master-MVPA\')
 addpath('D:/bbarnett/Documents/ecobrain/MVPA-Light\startup')
@@ -34,7 +37,10 @@ subjects = {
     'sub009'
     'sub010'
     'sub011'
-    };
+    %'sub012' %removed for movement being huge (between 16 - 28mm consistnetly)
+    %'sub013' %removed for sleeping at 49% accuracy in arabic task
+    %'sub014'
+    }; 
 
 
 %% Behavioural
@@ -283,9 +289,61 @@ plot_mean_control_RSA(cfg,subjects)
 
 %% END SANITY CHECKS
 
+%Source ROI Decoding
+tic;
+progressbar;
+for subj = 1:length(subjects)
+    subject = subjects{subj};
+
+    disp(subject);
+    
+    %Dots
+    cfg = [];
+    cfg.root = 'D:\bbarnett\Documents\Zero\data';
+    cfg.rawDir =  'D:\bbarnett\Documents\Zero\data\Raw';
+    cfg.vChanOutDir = 'Analysis\MEG\Source\virtualchannels\dots';
+    cfg.roiLabelIdxs = {'Frontal_Sup_L'	'Frontal_Sup_R'	'Frontal_Sup_Orb_L'	'Frontal_Sup_Orb_R'	'Frontal_Mid_L'	'Frontal_Mid_R'	'Frontal_Mid_Orb_L'	'Frontal_Mid_Orb_R'	'Frontal_Inf_Oper_L'	'Frontal_Inf_Oper_R'	'Frontal_Inf_Tri_L'	'Frontal_Inf_Tri_R'	'Frontal_Inf_Orb_L'	'Frontal_Inf_Orb_R'	'Frontal_Sup_Medial_L'	'Frontal_Sup_Medial_R'	'Frontal_Med_Orb_L'	'Frontal_Med_Orb_R'};
+    cfg.roi_name = 'frontal';
+    cfg.tSmooth = 7;
+    cfg.outdir = 'Analysis\MEG\Source\Decoding\dots';
+    cfg.sensor_data = 'dot_trials.mat';
+    cfg.metric = {'accuracy' 'confusion'};
+    cfg.condition_trls = {'meg_data.trialinfo(:,5) == 0 & meg_data.trialinfo(:,4) == 1'
+                            'meg_data.trialinfo(:,5) == 1 & meg_data.trialinfo(:,4) == 1'
+                            'meg_data.trialinfo(:,5) == 2 & meg_data.trialinfo(:,4) == 1'
+                            'meg_data.trialinfo(:,5) == 3 & meg_data.trialinfo(:,4) == 1'
+                            'meg_data.trialinfo(:,5) == 4 & meg_data.trialinfo(:,4) == 1'
+                            'meg_data.trialinfo(:,5) == 5 & meg_data.trialinfo(:,4) == 1'};
+    cfg.vChannels = SourceDecode(cfg,subject); %frontal decoding
+
+    cfg.roiLabelIdxs = {'Parietal_Sup_L'	'Parietal_Sup_R'	'Parietal_Inf_L'	'Parietal_Inf_R' 'SupraMarginal_L'	'SupraMarginal_R'	'Angular_L'	'Angular_R'};
+    cfg.roi_name = 'parietal';
+    SourceDecode(cfg,subject); %parietal decoding
+
+    %Arabic
+    cfg = rmfield(cfg,'vChannels');
+    cfg.vChanOutDir = 'Analysis\MEG\Source\virtualchannels\arabic';
+    cfg.roiLabelIdxs = {'Frontal_Sup_L'	'Frontal_Sup_R'	'Frontal_Sup_Orb_L'	'Frontal_Sup_Orb_R'	'Frontal_Mid_L'	'Frontal_Mid_R'	'Frontal_Mid_Orb_L'	'Frontal_Mid_Orb_R'	'Frontal_Inf_Oper_L'	'Frontal_Inf_Oper_R'	'Frontal_Inf_Tri_L'	'Frontal_Inf_Tri_R'	'Frontal_Inf_Orb_L'	'Frontal_Inf_Orb_R'	'Frontal_Sup_Medial_L'	'Frontal_Sup_Medial_R'	'Frontal_Med_Orb_L'	'Frontal_Med_Orb_R'};
+    cfg.roi_name = 'frontal';
+    cfg.outdir = 'Analysis\MEG\Source\Decoding\arabic';
+    cfg.sensor_data = 'arabic_trials.mat';
+    cfg.condition_trls = {'meg_data.trialinfo(:,4) == 0'
+                            'meg_data.trialinfo(:,4) == 1'
+                            'meg_data.trialinfo(:,4) == 2'
+                            'meg_data.trialinfo(:,4) == 3'
+                            'meg_data.trialinfo(:,4) == 4'
+                            'meg_data.trialinfo(:,4) == 5'}; 
+    cfg.vChannels = SourceDecode(cfg,subject); %frontal decoding
 
 
-%% %%%%%%%%%%%%%%%%%%%%% ANALYSIS %%%%%%%%%%%%%%%%%%%%% %%
+    cfg.roiLabelIdxs = {'Parietal_Sup_L'	'Parietal_Sup_R'	'Parietal_Inf_L'	'Parietal_Inf_R' 'SupraMarginal_L'	'SupraMarginal_R'	'Angular_L'	'Angular_R'};
+    cfg.roi_name = 'parietal';
+    SourceDecode(cfg,subject); %parietal decoding
+    progressbar(subj/length(subjects));
+    
+end
+toc;
+%% %%%%%%%%%%%%%%%%%%%%% ANALYSIS %%%%%%%%%%%%%%%%%%%%% %;%
 
 
 %% RSA 

@@ -13,6 +13,7 @@ subjects = {
     'sub008'
     'sub009'
     'sub010'
+    'sub011'
     };
 all_subjects = [];
 for subj = 1:length(subjects)
@@ -68,8 +69,8 @@ for subj = 1:length(subjects)
 
     sourcemodel_new = warped_mesh_sourcemodel;
 
-    %figure; ft_plot_sens(sens); hold on; ft_plot_headshape(fids); hold on;
-    %ft_plot_headmodel(headmodel_new); hold on; ft_plot_mesh(sourcemodel_new);
+    figure; ft_plot_sens(sens); hold on; ft_plot_headshape(fids); hold on;
+    ft_plot_headmodel(headmodel_new); hold on; ft_plot_mesh(sourcemodel_new);
 
 
     %% Source Analysis
@@ -86,7 +87,7 @@ for subj = 1:length(subjects)
       
     meg_data.grad = sens; 
     cfg = [];
-    cfg.trials = meg_data.trialinfo(:,5) == 5 & meg_data.trialinfo(:,4) == 1;
+    cfg.trials = meg_data.trialinfo(:,5) == 0 & meg_data.trialinfo(:,4) == 1;
     datazero = ft_selectdata(cfg,meg_data);
     cfg.trials = meg_data.trialinfo(:,5) < 5 & meg_data.trialinfo(:,4) == 1;
     datanotzero = ft_selectdata(cfg,meg_data);
@@ -139,13 +140,13 @@ for subj = 1:length(subjects)
     cfg.method        = 'surface';
     cfg.funparameter  = 'pow';
     cfg.funcolormap = 'jet';
-    %ft_sourceplot(cfg, source_diff);
+    ft_sourceplot(cfg, source_diff);
     
     %% Save 
     cfg.filename = fullfile(outputDir,strcat('source_',subject,'_dot_mni'));
     cfg.filetype = 'nifti';
     cfg.parameter = 'pow';
-    %ft_sourcewrite(cfg,source_diff);
+    %ft_s ourcewrite(cfg,source_diff);
     
     all_subjects = [all_subjects source_diff];
   
