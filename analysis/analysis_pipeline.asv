@@ -39,7 +39,7 @@ subjects = {
     'sub011'
     %'sub012' %removed for movement being huge (between 16 - 28mm consistnetly)
     %'sub013' %removed for sleeping at 49% accuracy in arabic task
-    'sub014'
+    %'sub014'
     %'sub015' %collected no data as he couldn't see with new contact lenses
     }; 
 
@@ -171,8 +171,8 @@ end
 %% SANITY CHECKS %%
 
 %% Representations of Zero RSA
-for subj = 1:length(subjects)
-    subject = subjects{subj};
+for subj = 1:length(all_subjects)
+    subject = all_subjects{subj};
     cfg  = [];
     cfg.root = 'D:\bbarnett\Documents\Zero\data';
     cfg.mRDM_path ='D:\bbarnett\Documents\Zero\scripts\ZeroMEG\analysis';
@@ -202,8 +202,8 @@ end
 
 
 %% Within Condition Multiclass Decoding
-for subj = 1:length(subjects)
-    subject = subjects{subj};
+for subj = 1:length(all_subjects)
+    subject = all_subjects{subj};
     cfg  = [];
     cfg.root = 'D:\bbarnett\Documents\Zero\data';
     cfg.output_path = 'Analysis/MEG/Multiclass_Decoding/OverTime';
@@ -211,7 +211,7 @@ for subj = 1:length(subjects)
     cfg.nMeanS = 7;
     cfg.metric = {'acc','conf'};
     cfg.output_prefix =  {'within_arabic_','within_dot_'}; %must be number data first
-    cfg.plot = false;
+    cfg.plot = true;
     cfg.channel = 'MEG';
     multiclass(cfg,subject);
     
@@ -219,15 +219,15 @@ end
 % Plot Group Average
 cfg.accFile = 'multiclass_within';
 cfg.figName = cfg.accFile;
-cfg.ylim = [0 0.55];
-cfg.clim = [0.0 0.55];
+cfg.ylim = [0 0.5];
+cfg.clim = [0.0 0.5];
 cfg.decoding_type = 'within';
 plot_multiclass_temp(cfg,subjects);
 
 
 %% Representation of Number: Confusion Matrix
-for subj = 1:length(subjects)
-    subject = subjects{subj};
+for subj = 1:length(all_subjects)
+    subject = all_subjects{subj};
     cfg  = [];
     cfg.root = 'D:\bbarnett\Documents\Zero\data';
 
@@ -262,7 +262,7 @@ cfg.mRDM_file = model;
 cfg.task = 'dots';
 cfg.ylim = [-0.4 1];
 cfg.title = 'Dot Stim-Set Control';
-plot_mean_control_RSA(cfg,subjects)
+plot_mean_control_RSA(cfg,all_subjects)
 
 % Arabic Control
 for subj = 1:length(subjects)
@@ -310,7 +310,7 @@ for subj = 1:length(subjects)
     cfg.outdir = 'Analysis\MEG\Source\Decoding\dots';
     cfg.sensor_data = 'dot_trials.mat';
     cfg.metric = {'accuracy' 'confusion'};
-    cfg.timepoints = [0.35 0.6];
+    cfg.timepoints = [0 0.8];
     cfg.condition_trls = {'meg_data.trialinfo(:,5) == 0 & meg_data.trialinfo(:,4) == 1'
                             'meg_data.trialinfo(:,5) == 1 & meg_data.trialinfo(:,4) == 1'
                             'meg_data.trialinfo(:,5) == 2 & meg_data.trialinfo(:,4) == 1'
@@ -319,10 +319,10 @@ for subj = 1:length(subjects)
                             'meg_data.trialinfo(:,5) == 5 & meg_data.trialinfo(:,4) == 1'};
     SourceDecode(cfg,subject); %frontal decoding
 
-    cfg.roiLabelIdxs = {'Parietal_Sup_L'	'Parietal_Sup_R'	'Parietal_Inf_L'	'Parietal_Inf_R' 'SupraMarginal_L'	'SupraMarginal_R'	'Angular_L'	'Angular_R' 'Postcentral_R' 'Postcentral_L'};
+    cfg.roiLabelIdxs = {'Parietal_Sup_L'	'Parietal_Sup_R'	'Parietal_Inf_L'	'Parietal_Inf_R' 'SupraMarginal_L'	'SupraMarginal_R'	'Angular_L'	'Angular_R'};
     cfg.roi_name = 'parietal';
     SourceDecode(cfg,subject); %parietal decoding
-
+%{
     %Arabic
     cfg.vChanOutDir = 'Analysis\MEG\Source\virtualchannels\arabic';
     cfg.roiLabelIdxs = {'Frontal_Sup_L'	'Frontal_Sup_R'	'Frontal_Sup_Orb_L'	'Frontal_Sup_Orb_R'	'Frontal_Mid_L'	'Frontal_Mid_R'	'Frontal_Mid_Orb_L'	'Frontal_Mid_Orb_R'	'Frontal_Inf_Oper_L'	'Frontal_Inf_Oper_R'	'Frontal_Inf_Tri_L'	'Frontal_Inf_Tri_R'	'Frontal_Inf_Orb_L'	'Frontal_Inf_Orb_R'	'Frontal_Sup_Medial_L'	'Frontal_Sup_Medial_R'	'Frontal_Med_Orb_L'	'Frontal_Med_Orb_R'};
@@ -330,7 +330,6 @@ for subj = 1:length(subjects)
     cfg.outdir = 'Analysis\MEG\Source\Decoding\arabic';
     cfg.sensor_data = 'arabic_trials.mat';
     cfg.group_size = 5;
-    cfg.timepoints = [0.35 0.6];
     cfg.condition_trls = {'meg_data.trialinfo(:,4) == 0'
                             'meg_data.trialinfo(:,4) == 1'
                             'meg_data.trialinfo(:,4) == 2'
@@ -339,10 +338,10 @@ for subj = 1:length(subjects)
                             'meg_data.trialinfo(:,4) == 5'}; 
     SourceDecode(cfg,subject); %frontal decoding
 
-    cfg.roiLabelIdxs = {'Parietal_Sup_L'	'Parietal_Sup_R'	'Parietal_Inf_L'	'Parietal_Inf_R' 'SupraMarginal_L'	'SupraMarginal_R'	'Angular_L'	'Angular_R' 'Postcentral_R' 'Postcentral_L'};
+    cfg.roiLabelIdxs = {'Parietal_Sup_L'	'Parietal_Sup_R'	'Parietal_Inf_L'	'Parietal_Inf_R' 'SupraMarginal_L'	'SupraMarginal_R'	'Angular_L'	'Angular_R'};
     cfg.roi_name = 'parietal';
     SourceDecode(cfg,subject); %parietal decoding
-
+%}
     progressbar(subj/length(subjects));
     
 end

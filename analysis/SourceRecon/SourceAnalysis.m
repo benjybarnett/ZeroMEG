@@ -1,4 +1,4 @@
-function [virtual_channels] = SourceAnalysis(cfg0,subject)
+function [virtual_channels] = SourceAnalysis(cfg0)
     
     %Function Name: SourceAnalysis
     % 
@@ -26,8 +26,8 @@ function [virtual_channels] = SourceAnalysis(cfg0,subject)
 
     %% Source Analysis
 
-    outputDir = fullfile(cfg0.outdir,subject);
-    if ~isfolder(outputDir);mkdir(outputDir);end
+    %outputDir = fullfile(cfg0.outdir,subject);
+    %if ~isfolder(outputDir);mkdir(outputDir);end
 
     data = load(cfg0.datadir); %fullfile('D:\bbarnett\Documents\Zero\data\CleanData\',subject,'\dot_trials.mat'
     data = struct2cell(data);data = data{1};
@@ -45,7 +45,6 @@ function [virtual_channels] = SourceAnalysis(cfg0,subject)
         cfg = [];
         cfg.covariance = 'yes';
         avg = ft_timelockanalysis(cfg,meg_data);
-         
     
         %calculate kappa (from fieldtrip tutorial)
         [u,s,v] = svd(avg.cov);
@@ -68,7 +67,7 @@ function [virtual_channels] = SourceAnalysis(cfg0,subject)
         sourceavg = ft_sourceanalysis(cfg, avg);
         sourceavg.pos = cfg0.pos; %set grid positions back to template sourcemodel grid
         
-        mkdir(fullfile(outputDir,'FullSource'))
+        %mkdir(fullfile(outputDir,'FullSource'))
         %save(fullfile(outputDir,'FullSource',cfg0.avgSourceOut),'sourceavg');
     
         clear sourcemodel headmodel avg
@@ -80,10 +79,9 @@ function [virtual_channels] = SourceAnalysis(cfg0,subject)
     end
         %}
         
-        disp(outputDir)
     
-    if ~isfile(fullfile(outputDir,'cond_vChannels.mat'))
-        virtual_channels = {};
+%    if ~isfile(fullfile(outputDir,'cond_vChannels.mat'))
+        virtual_channels = cell(6,1);
         for condition = 1:length(cfg0.condition_trls)
             fprintf('\n\n Computing Virtual Channels for Condition %d \n\n',condition)
             cfg = [];
@@ -91,6 +89,8 @@ function [virtual_channels] = SourceAnalysis(cfg0,subject)
             cfg.showcallinfo= 'no';
             data = ft_selectdata(cfg,meg_data);
     
+            
+
             cfg = [];
             cfg.covariance = 'yes';
             cfg.keeptrials = 'yes';
@@ -98,25 +98,31 @@ function [virtual_channels] = SourceAnalysis(cfg0,subject)
             cond_trials = ft_timelockanalysis(cfg,data);
             clear data
     
+            %Average samples to increase signal to noise and reduce trials for source recon
+            fprintf('Averaging Samples in groups of %d \n\n', cfg0.group_size)
+            pparam.group_size = cfg0.group_size;
+            [~, cond_trials.trial, ~] = mv_preprocess_average_samples(pparam, cond_trials.trial, ones(size(cond_trials.trial,1),1));
+            cond_trials = ft_timelockanalysis(cfg,cond_trials); %recomputes cov matrix over reduced/averaged trials
     
             %Get the virtual channels
             cfg = [];
             cfg.showcallinfo='no';
             cfg.pos = sourceavg.pos;
             cond_source = ft_virtualchannel(cfg,cond_trials,sourceavg); %using filters built from all conditions
-            virtual_channels{condition} = cond_source;
+            virtual_channels{condition,1} = cond_source;
             clear cond_trials cond_source
         end
         clear meg_data
         %% Save
-        disp('Saving Condition-Specific Virtual Channels...')
+        %disp('Saving Condition-Specific Virtual Channels...')
         %Not saving because files are so large and saving/loading takes nearly as much time as just re-running the code
         %save(fullfile(outputDir,'cond_vChannels.mat'),'virtual_channels','-v7.3');
         
-   
+   %{
     else
         disp('Loading Previously Computed Condition-Specific Virtual Channels')
         load(fullfile(outputDir,'cond_vChannels.mat'))
     end
+   %}
    
 end

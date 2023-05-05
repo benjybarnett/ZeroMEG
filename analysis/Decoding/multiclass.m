@@ -66,7 +66,7 @@ end
 cfgS = [];
 cfgS.classifier = 'multiclass_lda';
 cfgS.metric = cfg0.metric;
-cfgS.preprocess ={'undersample'};
+cfgS.preprocess ={'undersample','average_samples'};
 cfgS.repeat = 1;
 [results_arabic,~] = mv_classify_timextime(cfgS,smoothed_arabic_data,arabic_data.trialinfo(:,4));
 [results_dot,~] = mv_classify_timextime(cfgS,smoothed_dot_data,dot_data.trialinfo(:,5));

@@ -56,6 +56,7 @@ function NumberConfusion(cfg0,subject)
     cfg.mvpa.classifier = 'multiclass_lda';
     cfg.mvpa.metric     = 'conf';
     cfg.mvpa.k          = 5;
+    cfg.mvpa.preproc    = {'undersample','average_samples'};
     conf_dots = ft_timelockstatistics(cfg, dot_data_TL);
 
     cfg.design          = arabic_data_TL.trialinfo(:,4);

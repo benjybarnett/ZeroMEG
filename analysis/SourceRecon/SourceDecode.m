@@ -1,4 +1,4 @@
-function vChannels = SourceDecode(cfg0,subject)
+function SourceDecode(cfg0,subject)
 
     % SourceDecode Function
     % 
@@ -18,7 +18,6 @@ function vChannels = SourceDecode(cfg0,subject)
     % tSmooth: the time window (in seconds) to use for smoothing the data
     % The function performs forward modeling and source analysis on the MEG data for the specified subject, and extracts virtual channels for each of the specified ROIs. It then uses a linear discriminant analysis (LDA) classifier to decode the trial conditions (specified in cfg.condition_trls) based on the activity patterns in the virtual channels. The resulting decoding accuracy is saved to a results.mat file in the subject's output directory.
     % 
-    % The function outputs the Virtual Channels data over time for all trial conditions
     
     %Author: Benjy Barnett 2023
 
@@ -28,22 +27,19 @@ function vChannels = SourceDecode(cfg0,subject)
     [headmodel,sourcemodel,grad,pos,template_source] = ForwardModel(cfg,subject);
 
     %Perform Source Analysis - Get Virtual Channels Per Condition
-    if isfield(cfg0,'vChannels')
-        vChannels = cfg0.vChannels;
-        disp('Loading Virtual Channels')
-    else
-        disp('Calculating Virtual Channels')
-        cfg = [];
-        cfg.outdir = fullfile(cfg0.root,cfg0.vChanOutDir); %cfg0.vChanOutDir = 'Analysis/MEG\Source\virtualchannels\dots';
-        cfg.datadir = fullfile(cfg0.root,'CleanData',subject,cfg0.sensor_data);
-        cfg.headmodel = headmodel;
-        cfg.sourcemodel = sourcemodel;
-        cfg.grad = grad;
-        cfg.pos = pos;
-        cfg.avgSourceOut = 'avgSource.mat';
-        cfg.condition_trls = cfg0.condition_trls;
-        vChannels = SourceAnalysis(cfg,subject); %maybe add atlas functioning to this method
-    end
+   
+    disp('Calculating Virtual Channels')
+    cfg = [];
+    cfg.outdir = fullfile(cfg0.root,cfg0.vChanOutDir); %cfg0.vChanOutDir = 'Analysis/MEG\Source\virtualchannels\dots';
+    cfg.datadir = fullfile(cfg0.root,'CleanData',subject,cfg0.sensor_data);
+    cfg.headmodel = headmodel;
+    cfg.sourcemodel = sourcemodel;
+    cfg.grad = grad;
+    cfg.pos = pos;
+    cfg.avgSourceOut = 'avgSource.mat';
+    cfg.condition_trls = cfg0.condition_trls;
+    cfg.group_size = cfg0.group_size;
+    vChannels = SourceAnalysis(cfg); 
 
     %Load AAL Atlas
     atlas = ft_read_atlas('D:\bbarnett\Documents\ecobrain\fieldtrip-master-MVPA\template\atlas\aal\ROI_MNI_V4.nii');
@@ -68,7 +64,7 @@ function vChannels = SourceDecode(cfg0,subject)
         Y = [Y; zeros(size(source_roi,1),1)+cond];
     end
     
-    clear atlas_int 
+    clear atlas_int vChannels
 
     %Smooth Data
     smoothed_X = zeros(size(X));
@@ -82,15 +78,44 @@ function vChannels = SourceDecode(cfg0,subject)
     cfgS = [];
     cfgS.classifier = 'multiclass_lda';
     cfgS.metric = cfg0.metric;
-    cfgS.preprocess ={'undersample','average_samples'};
+    cfgS.preprocess ={'undersample'};%averaging samples before source recon
     cfgS.repeat = 1;
     cfgS.feedback = true;
     [results,~] = mv_classify(cfgS,smoothed_X,Y); 
+
+   
+    %{
+    %% Confusion Matrix Averaged Over Time
+    % Average over user-specified times
+    if contains(cfg0.sensor_data,'dot')
+        time = load('dot_time.mat');
+        time = time.dot_time;
+    elseif contains(cfg0.sensor_data,'arabic')
+        time = load('arabic_time.mat');
+        time = time.arabic_time;
+    end
+
+    beg = find(time == cfg0.timepoints(1));
+    fin =  find(time == cfg0.timepoints(2));
+
+    avg_X = squeeze(mean(smoothed_X(:,:,beg:fin),3));
+    
+    %Decode
+    cfgS = [];
+    cfgS.classifier = 'multiclass_lda';
+    cfgS.metric = 'confusion';
+    cfgS.preprocess ={'undersample'};%averaging samples before source recon
+    cfgS.repeat = 1;
+    cfgS.feedback = true;
+    [avg_conf,~] = mv_classify(cfgS,avg_X,Y); 
+    clear avg_X
+    %}
 
     %Save
     outputDir = fullfile(cfg0.root,cfg0.outdir,cfg0.roi_name,subject);
     if ~isfolder(outputDir);mkdir(outputDir);end
     save(fullfile(outputDir,'results.mat'),'results');
+    %save(fullfile(outputDir,'avg_conf.mat'),'avg_conf');
 
     clear results smoothed_X Y
 end
