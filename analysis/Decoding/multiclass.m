@@ -28,6 +28,7 @@ num_data = ft_selectdata(cfg,num_data);
 num_labels = num_labels(num_data.trialinfo(:,13) == 2);
 %}
 
+
 %% Select Sample Dot Stims
 cfgS = [];
 cfgS.trials = dot_data.trialinfo(:,4) == 1;

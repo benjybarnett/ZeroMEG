@@ -88,8 +88,6 @@ function [virtual_channels] = SourceAnalysis(cfg0)
             cfg.trials = eval(cfg0.condition_trls{condition});
             cfg.showcallinfo= 'no';
             data = ft_selectdata(cfg,meg_data);
-    
-            
 
             cfg = [];
             cfg.covariance = 'yes';

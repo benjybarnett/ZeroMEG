@@ -41,6 +41,9 @@ subjects = {
     %'sub013' %removed for sleeping at 49% accuracy in arabic task
     'sub014'
     %'sub015' %collected no data as he couldn't see with new contact lenses
+    'sub016'
+    'sub017'
+    'sub018'
     }; 
 
 
@@ -219,8 +222,8 @@ end
 % Plot Group Average
 cfg.accFile = 'multiclass_within';
 cfg.figName = cfg.accFile;
-cfg.ylim = [0 0.55];
-cfg.clim = [0.0 0.55];
+cfg.ylim = [0 0.7];
+cfg.clim = [0.0 0.7];
 cfg.decoding_type = 'within';
 plot_multiclass_temp(cfg,subjects);
 
@@ -303,43 +306,44 @@ for subj = 1:length(subjects)
     cfg.root = 'D:\bbarnett\Documents\Zero\data';
     cfg.rawDir =  'D:\bbarnett\Documents\Zero\data\Raw';
     cfg.vChanOutDir = 'Analysis\MEG\Source\virtualchannels\dots';
-    cfg.roiLabelIdxs = {'Frontal_Sup_L'	'Frontal_Sup_R'	'Frontal_Sup_Orb_L'	'Frontal_Sup_Orb_R'	'Frontal_Mid_L'	'Frontal_Mid_R'	'Frontal_Mid_Orb_L'	'Frontal_Mid_Orb_R'	'Frontal_Inf_Oper_L'	'Frontal_Inf_Oper_R'	'Frontal_Inf_Tri_L'	'Frontal_Inf_Tri_R'	'Frontal_Inf_Orb_L'	'Frontal_Inf_Orb_R'	'Frontal_Sup_Medial_L'	'Frontal_Sup_Medial_R'	'Frontal_Med_Orb_L'	'Frontal_Med_Orb_R'};
+    cfg.roiLabelIdxs = {'Cingulum_Ant_L', 'Cingulum_Ant_R',  'Rectus_L', 'Rectus_R', 'Frontal_Sup_L'	'Frontal_Sup_R'	'Frontal_Sup_Orb_L'	'Frontal_Sup_Orb_R'	'Frontal_Mid_L'	'Frontal_Mid_R'	'Frontal_Mid_Orb_L'	'Frontal_Mid_Orb_R'	'Frontal_Inf_Oper_L'	'Frontal_Inf_Oper_R'	'Frontal_Inf_Tri_L'	'Frontal_Inf_Tri_R'	'Frontal_Inf_Orb_L'	'Frontal_Inf_Orb_R'	'Frontal_Sup_Medial_L'	'Frontal_Sup_Medial_R'	'Frontal_Med_Orb_L'	'Frontal_Med_Orb_R'};
     cfg.roi_name = 'frontal';
     cfg.tSmooth = 7;
     cfg.group_size = 5;
+    cfg.pca =false;
     cfg.outdir = 'Analysis\MEG\Source\Decoding\dots';
     cfg.sensor_data = 'dot_trials.mat';
     cfg.metric = {'accuracy' 'confusion'};
     cfg.timepoints = [0.35 0.6];
-    cfg.condition_trls = {'meg_data.trialinfo(:,5) == 0 & meg_data.trialinfo(:,4) == 1'
-                            'meg_data.trialinfo(:,5) == 1 & meg_data.trialinfo(:,4) == 1'
-                            'meg_data.trialinfo(:,5) == 2 & meg_data.trialinfo(:,4) == 1'
-                            'meg_data.trialinfo(:,5) == 3 & meg_data.trialinfo(:,4) == 1'
-                            'meg_data.trialinfo(:,5) == 4 & meg_data.trialinfo(:,4) == 1'
-                            'meg_data.trialinfo(:,5) == 5 & meg_data.trialinfo(:,4) == 1'};
+    cfg.condition_trls = {'meg_data.trialinfo(:,5) == 0 & meg_data.trialinfo(:,4) == 1 & meg_data.trialinfo(:,8) ~= 0'
+                            'meg_data.trialinfo(:,5) == 1 & meg_data.trialinfo(:,4) == 1 & meg_data.trialinfo(:,8) ~= 0'
+                            'meg_data.trialinfo(:,5) == 2 & meg_data.trialinfo(:,4) == 1 & meg_data.trialinfo(:,8) ~= 0'
+                            'meg_data.trialinfo(:,5) == 3 & meg_data.trialinfo(:,4) == 1 & meg_data.trialinfo(:,8) ~= 0'
+                            'meg_data.trialinfo(:,5) == 4 & meg_data.trialinfo(:,4) == 1 & meg_data.trialinfo(:,8) ~= 0'
+                            'meg_data.trialinfo(:,5) == 5 & meg_data.trialinfo(:,4) == 1 & meg_data.trialinfo(:,8) ~= 0'}; %sample image, and only images with a response
     SourceDecode(cfg,subject); %frontal decoding
 
-    cfg.roiLabelIdxs = {'Parietal_Sup_L'	'Parietal_Sup_R'	'Parietal_Inf_L'	'Parietal_Inf_R' 'SupraMarginal_L'	'SupraMarginal_R'	'Angular_L'	'Angular_R' 'Postcentral_R' 'Postcentral_L'};
+    cfg.roiLabelIdxs = {'Parietal_Sup_L'	'Parietal_Sup_R'	'Parietal_Inf_L'	'Parietal_Inf_R' 'SupraMarginal_L'	'SupraMarginal_R'	'Angular_L'	'Angular_R' 'Precuneus_L' 'Precuneus_R'};
     cfg.roi_name = 'parietal';
     SourceDecode(cfg,subject); %parietal decoding
 
     %Arabic
     cfg.vChanOutDir = 'Analysis\MEG\Source\virtualchannels\arabic';
-    cfg.roiLabelIdxs = {'Frontal_Sup_L'	'Frontal_Sup_R'	'Frontal_Sup_Orb_L'	'Frontal_Sup_Orb_R'	'Frontal_Mid_L'	'Frontal_Mid_R'	'Frontal_Mid_Orb_L'	'Frontal_Mid_Orb_R'	'Frontal_Inf_Oper_L'	'Frontal_Inf_Oper_R'	'Frontal_Inf_Tri_L'	'Frontal_Inf_Tri_R'	'Frontal_Inf_Orb_L'	'Frontal_Inf_Orb_R'	'Frontal_Sup_Medial_L'	'Frontal_Sup_Medial_R'	'Frontal_Med_Orb_L'	'Frontal_Med_Orb_R'};
+    cfg.roiLabelIdxs = {'Cingulum_Ant_L', 'Cingulum_Ant_R',  'Rectus_L', 'Rectus_R', 'Frontal_Sup_L'	'Frontal_Sup_R'	'Frontal_Sup_Orb_L'	'Frontal_Sup_Orb_R'	'Frontal_Mid_L'	'Frontal_Mid_R'	'Frontal_Mid_Orb_L'	'Frontal_Mid_Orb_R'	'Frontal_Inf_Oper_L'	'Frontal_Inf_Oper_R'	'Frontal_Inf_Tri_L'	'Frontal_Inf_Tri_R'	'Frontal_Inf_Orb_L'	'Frontal_Inf_Orb_R'	'Frontal_Sup_Medial_L'	'Frontal_Sup_Medial_R'	'Frontal_Med_Orb_L'	'Frontal_Med_Orb_R'};
     cfg.roi_name = 'frontal';
     cfg.outdir = 'Analysis\MEG\Source\Decoding\arabic';
     cfg.sensor_data = 'arabic_trials.mat';
     cfg.group_size = 5;
     cfg.timepoints = [0.35 0.6];
-    cfg.condition_trls = {'meg_data.trialinfo(:,4) == 0'
-                            'meg_data.trialinfo(:,4) == 1'
-                            'meg_data.trialinfo(:,4) == 2'
-                            'meg_data.trialinfo(:,4) == 3'
-                            'meg_data.trialinfo(:,4) == 4'
-                            'meg_data.trialinfo(:,4) == 5'}; 
+    cfg.condition_trls = {'meg_data.trialinfo(:,4) == 0 & meg_data.trialinfo(:,6) ~= 0'
+                            'meg_data.trialinfo(:,4) == 1 & meg_data.trialinfo(:,6) ~= 0'
+                            'meg_data.trialinfo(:,4) == 2 & meg_data.trialinfo(:,6) ~= 0'
+                            'meg_data.trialinfo(:,4) == 3 & meg_data.trialinfo(:,6) ~= 0'
+                            'meg_data.trialinfo(:,4) == 4 & meg_data.trialinfo(:,6) ~= 0'
+                            'meg_data.trialinfo(:,4) == 5 & meg_data.trialinfo(:,6) ~= 0'}; 
     SourceDecode(cfg,subject); %frontal decoding
 
-    cfg.roiLabelIdxs = {'Parietal_Sup_L'	'Parietal_Sup_R'	'Parietal_Inf_L'	'Parietal_Inf_R' 'SupraMarginal_L'	'SupraMarginal_R'	'Angular_L'	'Angular_R' 'Postcentral_R' 'Postcentral_L'};
+    cfg.roiLabelIdxs = {'Parietal_Sup_L'	'Parietal_Sup_R'	'Parietal_Inf_L'	'Parietal_Inf_R' 'SupraMarginal_L'	'SupraMarginal_R'	'Angular_L'	'Angular_R' 'Precuneus_L' 'Precuneus_R'};
     cfg.roi_name = 'parietal';
     SourceDecode(cfg,subject); %parietal decoding
 
@@ -347,6 +351,98 @@ for subj = 1:length(subjects)
     
 end
 toc;
+
+
+%% SOURCE RSA ZERO
+tic;
+progressbar;
+fro_pc_dot = [];
+par_pc_dot = [];
+fro_pc_arab = [];
+par_pc_arab = [];
+for subj = 1:length(subjects)
+    subject = subjects{subj};
+
+    disp(subject);
+    
+    %Dots
+    cfg = [];
+    cfg.root = 'D:\bbarnett\Documents\Zero\data';
+    cfg.rawDir =  'D:\bbarnett\Documents\Zero\data\Raw';
+    cfg.vChanOutDir = 'Analysis\MEG\Source\virtualchannels\dots';
+    cfg.roiLabelIdxs = {'Cingulum_Ant_L', 'Cingulum_Ant_R',  'Rectus_L', 'Rectus_R', 'Frontal_Sup_L'	'Frontal_Sup_R'	'Frontal_Sup_Orb_L'	'Frontal_Sup_Orb_R'	'Frontal_Mid_L'	'Frontal_Mid_R'	'Frontal_Mid_Orb_L'	'Frontal_Mid_Orb_R'	'Frontal_Inf_Oper_L'	'Frontal_Inf_Oper_R'	'Frontal_Inf_Tri_L'	'Frontal_Inf_Tri_R'	'Frontal_Inf_Orb_L'	'Frontal_Inf_Orb_R'	'Frontal_Sup_Medial_L'	'Frontal_Sup_Medial_R'	'Frontal_Med_Orb_L'	'Frontal_Med_Orb_R'};
+    cfg.roi_name = 'frontal';
+    cfg.group_size = 5;
+    cfg.mRDM_path ='D:\bbarnett\Documents\Zero\scripts\ZeroMEG\analysis';
+    cfg.mRDM_file = 'discrete_zero_rdm';
+    cfg.outdir = 'Analysis\MEG\Source\RSA\dots';
+    cfg.sensor_data = 'dot_trials.mat';
+    cfg.num_predictors = 6;
+    cfg.pca = false;
+    cfg.condition_trls = {'meg_data.trialinfo(:,5) == 0 & meg_data.trialinfo(:,4) == 1 & meg_data.trialinfo(:,8) ~= 0'
+                            'meg_data.trialinfo(:,5) == 1 & meg_data.trialinfo(:,4) == 1 & meg_data.trialinfo(:,8) ~= 0'
+                            'meg_data.trialinfo(:,5) == 2 & meg_data.trialinfo(:,4) == 1 & meg_data.trialinfo(:,8) ~= 0'
+                            'meg_data.trialinfo(:,5) == 3 & meg_data.trialinfo(:,4) == 1 & meg_data.trialinfo(:,8) ~= 0'
+                            'meg_data.trialinfo(:,5) == 4 & meg_data.trialinfo(:,4) == 1 & meg_data.trialinfo(:,8) ~= 0'
+                            'meg_data.trialinfo(:,5) == 5 & meg_data.trialinfo(:,4) == 1 & meg_data.trialinfo(:,8) ~= 0'}; %sample image, and only images with a response
+    pc = SourceRSA_Zero(cfg,subject); %frontal decoding
+    fro_pc_dot = [fro_pc_dot pc];
+    cfg.roiLabelIdxs = {'Parietal_Sup_L'	'Parietal_Sup_R'	'Parietal_Inf_L'	'Parietal_Inf_R' 'SupraMarginal_L'	'SupraMarginal_R'	'Angular_L'	'Angular_R' 'Precuneus_L' 'Precuneus_R'};
+    cfg.roi_name = 'parietal';
+    pc = SourceRSA_Zero(cfg,subject); %parietal decoding
+    par_pc_dot = [par_pc_dot pc];
+
+    %Arabic
+    cfg.vChanOutDir = 'Analysis\MEG\Source\virtualchannels\arabic';
+    cfg.roiLabelIdxs = {'Cingulum_Ant_L', 'Cingulum_Ant_R',  'Rectus_L', 'Rectus_R', 'Frontal_Sup_L'	'Frontal_Sup_R'	'Frontal_Sup_Orb_L'	'Frontal_Sup_Orb_R'	'Frontal_Mid_L'	'Frontal_Mid_R'	'Frontal_Mid_Orb_L'	'Frontal_Mid_Orb_R'	'Frontal_Inf_Oper_L'	'Frontal_Inf_Oper_R'	'Frontal_Inf_Tri_L'	'Frontal_Inf_Tri_R'	'Frontal_Inf_Orb_L'	'Frontal_Inf_Orb_R'	'Frontal_Sup_Medial_L'	'Frontal_Sup_Medial_R'	'Frontal_Med_Orb_L'	'Frontal_Med_Orb_R'};
+    cfg.roi_name = 'frontal';
+    cfg.outdir = 'Analysis\MEG\Source\RSA\arabic';
+    cfg.sensor_data = 'arabic_trials.mat';
+    cfg.group_size = 5;
+    cfg.condition_trls = {'meg_data.trialinfo(:,4) == 0 & meg_data.trialinfo(:,6) ~= 0'
+                            'meg_data.trialinfo(:,4) == 1 & meg_data.trialinfo(:,6) ~= 0'
+                            'meg_data.trialinfo(:,4) == 2 & meg_data.trialinfo(:,6) ~= 0'
+                            'meg_data.trialinfo(:,4) == 3 & meg_data.trialinfo(:,6) ~= 0'
+                            'meg_data.trialinfo(:,4) == 4 & meg_data.trialinfo(:,6) ~= 0'
+                            'meg_data.trialinfo(:,4) == 5 & meg_data.trialinfo(:,6) ~= 0'}; 
+    pc = SourceRSA_Zero(cfg,subject); %frontal decoding
+    fro_pc_arab = [fro_pc_arab pc];
+
+    cfg.roiLabelIdxs = {'Parietal_Sup_L'	'Parietal_Sup_R'	'Parietal_Inf_L'	'Parietal_Inf_R' 'SupraMarginal_L'	'SupraMarginal_R'	'Angular_L'	'Angular_R' 'Precuneus_L' 'Precuneus_R'};
+    cfg.roi_name = 'parietal';
+    pc = SourceRSA_Zero(cfg,subject); %parietal decoding
+    par_pc_arab = [par_pc_arab pc];
+
+    progressbar(subj/length(subjects));
+    
+end
+toc;
+% Plot
+models = {'graded_zero_rdm','discrete_zero_rdm'};
+colours = {'#C32F27',"#0496FF"};
+figure('units','normalized','outerposition',[0 0 1 1])
+regions = {'parietal','frontal'};
+for j = 1:length(regions)
+    figure;
+    for m = 1:length(models)
+        
+        model = models{m};
+        cfg.linecolor = colours;
+        cfg.shadecolor = cfg.linecolor;
+        cfg.mRDM_file = model;
+        cfg.ylim = [-0.4 1];
+        if m > 1
+            cfg.dashed = true;
+        else
+            cfg.dashed = false;
+        end
+
+        cfg.output_path =  'Analysis\MEG\Source\RSA\';
+        cfg.region = regions{j};
+        plot_mean_RSA_source(cfg,subjects)
+        hold on
+    end
+end
 %% %%%%%%%%%%%%%%%%%%%%% ANALYSIS %%%%%%%%%%%%%%%%%%%%% %;%
 
 

@@ -1,5 +1,5 @@
 clear;
-close all;
+%close all;
 subjects = {
     'sub001'
     'sub002' 
@@ -12,7 +12,10 @@ subjects = {
     'sub009'
     'sub010'
     'sub011'
-
+    'sub014'
+    'sub016'
+    'sub017'
+    'sub018'
     };
 timeon = 0;
 timeoff = 0.5;
@@ -31,20 +34,38 @@ par_conf = [];
 
 for subj = 1:length(subjects)
     subject = subjects{subj};
-    load(fullfile('D:\bbarnett\Documents\Zero\data\Analysis\MEG\Source\Decoding\dots\parietal\',subject,'results_2.mat'))
-    acc = results{1}';
-    par_acc = [par_acc; acc];
-    par_conf(subj,:,:,:) = results{2};
+    load(fullfile('D:\bbarnett\Documents\Zero\data\Analysis\MEG\Source\Decoding\dots\parietal',subject,'results.mat'))
+    acc = results.accuracy;
+    par_acc(subj,:,:) = acc;
+    confusion = results.confusion;
 
-    load(fullfile('D:\bbarnett\Documents\Zero\data\Analysis\MEG\Source\Decoding\dots\frontal\',subject,'results_2.mat'))
-    acc = results{1}';
-    fro_acc = [fro_acc; acc];
-    fro_conf(subj,:,:,:) = results{2};
+    
+    par_conf_tmp = confusion;
+    for trnT = 1:size(par_conf_tmp,1)
+        conf(trnT,:,:) = squeeze(par_conf_tmp(trnT,:,:,trnT));
+    end
+    par_conf(subj,:,:,:) = conf;
+    
+
+    load(fullfile('D:\bbarnett\Documents\Zero\data\Analysis\MEG\Source\Decoding\dots\frontal',subject,'results.mat'))
+    acc = results.accuracy;
+    fro_acc(subj,:,:) = acc;
+    confusion = results.confusion;
+
+    %Only interested in confusion matrix of diagonal decoding
+    %So we extract diagonal from the temporal generalisation matrix#
+    fro_conf_tmp = confusion;
+    for trnT = 1:size(fro_conf_tmp,1)
+        conf(trnT,:,:) = squeeze(fro_conf_tmp(trnT,:,:,trnT));
+    end
+    fro_conf(subj,:,:,:) = conf;
+%}
 end
 
 %Plot accuracies over time Parietal
-mean_par = mean(par_acc);
+mean_par = squeeze(mean(par_acc,1));
 
+%{
 std_dev = std(par_acc);
 CIs = [];
 for i =1:size(par_acc,2)
@@ -75,10 +96,26 @@ title('Dots - Parietal Decoding');
 xlabel('Time (s)')
 ylabel('Accuracy')
 
+%}
+
+
+%Plot Temp Gen
+figure('units','normalized','outerposition',[0 0 1 1])
+subplot(1,2,1);
+imagesc(dot_time,dot_time,mean_par); axis xy; %colorbar
+xlabel('Train Time (s)'); ylabel('Test Time (s)');
+hold on; plot([0 0],ylim,'r'); hold on; plot(xlim,[0 0],'r');
+hold on; plot([1 1],ylim,'k'); hold on; plot(ylim,[1 1],'k')
+caxis([0.13 0.33])
+title('Dots - Parietal')
+colorbar;
+colormap('jet')
+
 %Plot accuracy over time frontal
 par_acc = fro_acc; %SAVING TIME EDITING PAR_ACC VARS BELOW
-mean_par = mean(par_acc);
+mean_par = squeeze(mean(par_acc,1));
 
+%{
 std_dev = std(par_acc);
 CIs = [];
 for i =1:size(par_acc,2)
@@ -108,7 +145,19 @@ xline(0,'--');
 title('Dots - Frontal Decoding');
 xlabel('Time (s)')
 ylabel('Accuracy')
+%}
 
+%Plot Temp Gen
+%figure('units','normalized','outerposition',[0 0 1 1])
+subplot(1,2,2);
+imagesc(dot_time,dot_time,mean_par); axis xy; %colorbar
+xlabel('Train Time (s)'); ylabel('Test Time (s)');
+hold on; plot([0 0],ylim,'r'); hold on; plot(xlim,[0 0],'r');
+hold on; plot([1 1],ylim,'k'); hold on; plot(ylim,[1 1],'k')
+caxis([0.13 0.33])
+colorbar;
+title('Dots - Frontal')
+colormap('jet')
 
 %% Confusion Over Time
 
@@ -117,6 +166,7 @@ figure;
 conf_grp = squeeze(mean(par_conf,1));
 par_conf_grp = conf_grp;
 
+CIs = CalcCI95(par_conf);
 
 time = dot_time(1:10:length(dot_time));
 titles = {'P-Zero','P-One','P-Two','P-Three','P-Four','P-Five'};
@@ -184,6 +234,7 @@ fro_conf_grp = conf_grp;
 
 time = dot_time(1:10:length(dot_time));
 titles = {'F-Zero','F-One','F-Two','F-Three','F-Four','F-Five'};
+CIs = CalcCI95(fro_conf);
 
 for true_class = 1:size(conf_grp,2)
    
@@ -289,7 +340,7 @@ for cl = 1:length(curves)
 
     hold on
 end
-legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'}); %true classes
+%legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'}); %true classes
 
 
 
@@ -358,20 +409,35 @@ par_conf = [];
 
 for subj = 1:length(subjects)
     subject = subjects{subj};
-    load(fullfile('D:\bbarnett\Documents\Zero\data\Analysis\MEG\Source\Decoding\arabic\parietal\',subject,'results.mat'))
-    acc = results{1}';
-    par_acc = [par_acc; acc];
-    par_conf(subj,:,:,:) = results{2};
+    load(fullfile('D:\bbarnett\Documents\Zero\data\Analysis\MEG\Source\Decoding\arabic\parietal',subject,'results.mat'))
+    acc = results.accuracy;
 
-    load(fullfile('D:\bbarnett\Documents\Zero\data\Analysis\MEG\Source\Decoding\arabic\frontal\',subject,'results.mat'))
-    acc = results{1}';
-    fro_acc = [fro_acc; acc];
-    fro_conf(subj,:,:,:) = results{2};
+    par_acc(subj,:,:) = acc;
+    confusion = results.confusion;
+   
+    par_conf_tmp = confusion;
+    for trnT = 1:size(par_conf_tmp,1)
+        conf(trnT,:,:) = squeeze(par_conf_tmp(trnT,:,:,trnT));
+    end
+    par_conf(subj,:,:,:) = conf;
+   
+    load(fullfile('D:\bbarnett\Documents\Zero\data\Analysis\MEG\Source\Decoding\arabic\frontal',subject,'results.mat'))
+        acc = results.accuracy;
+
+    fro_acc(subj,:,:) = acc;
+    confusion = results.confusion;
+
+    fro_conf_tmp = confusion;
+    for trnT = 1:size(fro_conf_tmp,1)
+        conf(trnT,:,:) = squeeze(fro_conf_tmp(trnT,:,:,trnT));
+    end
+    fro_conf(subj,:,:,:) = conf;
+    
 end
 
 %Plot accuracies over time Parietal
-mean_par = mean(par_acc);
-
+mean_par = squeeze(mean(par_acc,1));
+%{
 std_dev = std(par_acc);
 CIs = [];
 for i =1:size(par_acc,2)
@@ -401,11 +467,24 @@ xline(0,'--');
 title('Arabic - Parietal Decoding');
 xlabel('Time (s)')
 ylabel('Accuracy')
+%}
+
+figure('units','normalized','outerposition',[0 0 1 1])
+subplot(1,2,1);
+imagesc(arabic_time,arabic_time,mean_par); axis xy; %colorbar
+xlabel('Train Time (s)'); ylabel('Test Time (s)');
+hold on; plot([0 0],ylim,'r'); hold on; plot(xlim,[0 0],'r');
+hold on; plot([1 1],ylim,'k'); hold on; plot(ylim,[1 1],'k')
+caxis([0.14 0.45])
+colorbar;
+title('Arabic - Parietal')
+colormap('jet')
+
 
 %Plot accuracy over time frontal
 par_acc = fro_acc; %SAVING TIME EDITING PAR_ACC VARS BELOW
-mean_par = mean(par_acc);
-
+mean_par = squeeze(mean(par_acc,1));
+%{
 std_dev = std(par_acc);
 CIs = [];
 for i =1:size(par_acc,2)
@@ -435,7 +514,17 @@ xline(0,'--');
 title('Arabic - Frontal Decoding');
 xlabel('Time (s)')
 ylabel('Accuracy')
+%}
 
+subplot(1,2,2);
+imagesc(arabic_time,arabic_time,mean_par); axis xy; %colorbar
+xlabel('Train Time (s)'); ylabel('Test Time (s)');
+hold on; plot([0 0],ylim,'r'); hold on; plot(xlim,[0 0],'r');
+hold on; plot([1 1],ylim,'k'); hold on; plot(ylim,[1 1],'k')
+caxis([0.14 0.45])
+colorbar;
+title('Arabic -  Frontal')
+colormap('jet')
 
 %% Confusion Over Time
 figure;
@@ -445,6 +534,7 @@ par_conf_grp = conf_grp;
 
 time = arabic_time(1:10:length(arabic_time));
 titles = {'P-Zero','P-One','P-Two','P-Three','P-Four','P-Five'};
+CIs = CalcCI95(par_conf);
 
 for true_class = 1:size(conf_grp,2)
    
@@ -512,6 +602,7 @@ fro_conf_grp = conf_grp;
 
 time = arabic_time(1:10:length(arabic_time));
 titles = {'F-Zero','F-One','F-Two','F-Three','F-Four','F-Five'};
+CIs = CalcCI95(fro_conf);
 
 for true_class = 1:size(conf_grp,2)
    
@@ -616,7 +707,7 @@ for cl = 1:length(curves)
 
     hold on
 end
-legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'}); %true classes
+%legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'}); %true classes
 
 %frontal 
 beg = find(arabic_time == timeon);
@@ -662,6 +753,6 @@ for cl = 1:length(curves)
 
     hold on
 end
-legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'}); %true classes
+%legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'}); %true classes
 
 
