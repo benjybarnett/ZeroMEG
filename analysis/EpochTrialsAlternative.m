@@ -1,6 +1,6 @@
-function EpochTrials(cfg0,subject)
-% function CheckEpochTrials(cfg0,subjectID)
-% Checks whether the epoching done by time matches triggers
+function EpochTrialsAlternative(cfg0,subject)
+% epochs trials in a different way in case original script doesnt work 
+% for example due to the PD signal being too noisy
 
 saveDir                     = fullfile(cfg0.datadir,subject);
 if ~exist(saveDir,'dir'); mkdir(saveDir); end
@@ -11,11 +11,11 @@ data = struct2cell(data); arabic_data = data{1};
 
 
 %for sub004, block 1 comes out with NaNs because PD signal so weak can't epoch properly
-%{
+
 cfg = [];
-cfg.trials = arabic_data.trialinfo(:,1) ~= 1;
+cfg.trials = arabic_data.trialinfo(:,1)> 3;
 arabic_data = ft_selectdata(cfg,arabic_data);
-%}
+
 
 %% Create new trl matrix
 
@@ -30,9 +30,21 @@ trl = [];
 presamples = cfg0.arabic_prestim * arabic_data.fsample;
 postsamples = cfg0.arabic_poststim * arabic_data.fsample;
 for iTrial = 1:length(lightDiodeSignal.trial)
-    
+    %figure
+    %plot(lightDiodeSignal.trial{iTrial})
+    5hold on
     [~,ind] = mink(diff(lightDiodeSignal.trial{iTrial}),10); %get sample index of 10 stim-onset times per trial
     ind = sort(ind); %sort them from first to last
+    
+
+    %%
+    PD_on = lightDiodeSignal.trial{iTrial} < (mean(lightDiodeSignal.trial{iTrial})-(0.5*std(lightDiodeSignal.trial{iTrial}))); %get when the PD is on (when is less than 1 SD below mean)
+    pdind = find(PD_on);
+    %xline(pdind)
+    [~,ind] = maxk(diff(pdind),10);
+    ind = sort(pdind(ind+1));
+    %xline(ind)
+    %%
 
     for t = 1:length(ind) %loop over the 10 stims in each trial and make their own row in the trl matrix (i.e. make them their own trial)
         stimOn = ind(t)+arabic_data.sampleinfo(iTrial,1); % stim onset in samples relative to beginning of whole experiment
@@ -55,6 +67,15 @@ arabic_trials = ft_redefinetrial(cfg,arabic_data);
 %Plot new, shorter, trials and check they are all aligned with the stim at 0
 figure;
 for i = 1:length(arabic_trials.time)
+    %{
+    if arabic_trials.trialinfo(i,1) ~= arabic_trials.trialinfo(i-1,1)
+        figure;
+    end
+    if any(isnan(arabic_trials.trial{i}(313,:)))
+        disp('hello')
+        continue
+    end
+    %}
     plot(arabic_trials.time{1},arabic_trials.trial{i}(313,:))
     hold on
 end
@@ -82,7 +103,7 @@ save(fullfile(saveDir,cfg0.arabicSaveName),'arabic_trials','-v7.3')
 
 
 clear trl arabic_trials arabic_data lightDiodeSignal
-
+%{
 %% Dots
 
 data = load(fullfile(cfg0.datadir,subject,'dot_data.mat'));
@@ -153,6 +174,6 @@ dot_trials.trialnumbers = (1:length(dot_trials.trial))';
 
 save(fullfile(saveDir,cfg0.dotSaveName),'dot_trials','-v7.3')
 
-
+%}
 
 end

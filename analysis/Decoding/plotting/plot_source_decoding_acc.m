@@ -110,6 +110,7 @@ caxis([0.13 0.33])
 title('Dots - Parietal')
 colorbar;
 colormap('jet')
+ set(findall(gcf,'-property','FontSize'),'FontSize',20)
 
 %Plot accuracy over time frontal
 par_acc = fro_acc; %SAVING TIME EDITING PAR_ACC VARS BELOW
@@ -158,6 +159,7 @@ caxis([0.13 0.33])
 colorbar;
 title('Dots - Frontal')
 colormap('jet')
+ set(findall(gcf,'-property','FontSize'),'FontSize',20)
 
 %% Confusion Over Time
 
@@ -201,12 +203,12 @@ for true_class = 1:size(conf_grp,2)
     chance.Annotation.LegendInformation.IconDisplayStyle = 'off';
     
     
-    plot(time,zero,'Color',cell2mat(ci_colours(1)),'LineWidth',1.2);      
-    plot(time,one,'Color',cell2mat(ci_colours(2)),'LineWidth',1.2);    
-    plot(time,two,'Color',cell2mat(ci_colours(3)),'LineWidth',1.2); 
-    plot(time,three,'Color',cell2mat(ci_colours(4)),'LineWidth',1.2);
-    plot(time,four,'Color',cell2mat(ci_colours(5)),'LineWidth',1.2);
-    plot(time,five,'Color',cell2mat(ci_colours(6)),'LineWidth',1.2);
+    plot(time,zero,'Color',cell2mat(ci_colours(1)),'LineWidth',1.5);      
+    plot(time,one,'Color',cell2mat(ci_colours(2)),'LineWidth',1.5);    
+    plot(time,two,'Color',cell2mat(ci_colours(3)),'LineWidth',1.5); 
+    plot(time,three,'Color',cell2mat(ci_colours(4)),'LineWidth',1.5); 
+    plot(time,four,'Color',cell2mat(ci_colours(5)),'LineWidth',1.5); 
+    plot(time,five,'Color',cell2mat(ci_colours(6)),'LineWidth',1.5); 
 
     xlim([min(dot_time),max(dot_time)])
     ylim([0.08 0.5])
@@ -266,12 +268,12 @@ for true_class = 1:size(conf_grp,2)
     chance.Annotation.LegendInformation.IconDisplayStyle = 'off';
     
     
-    plot(time,zero,'Color',cell2mat(ci_colours(1)),'LineWidth',1.2);      
-    plot(time,one,'Color',cell2mat(ci_colours(2)),'LineWidth',1.2);    
-    plot(time,two,'Color',cell2mat(ci_colours(3)),'LineWidth',1.2); 
-    plot(time,three,'Color',cell2mat(ci_colours(4)),'LineWidth',1.2);
-    plot(time,four,'Color',cell2mat(ci_colours(5)),'LineWidth',1.2);
-    plot(time,five,'Color',cell2mat(ci_colours(6)),'LineWidth',1.2);
+    plot(time,zero,'Color',cell2mat(ci_colours(1)),'LineWidth',1.5);      
+    plot(time,one,'Color',cell2mat(ci_colours(2)),'LineWidth',1.5);    
+    plot(time,two,'Color',cell2mat(ci_colours(3)),'LineWidth',1.5); 
+    plot(time,three,'Color',cell2mat(ci_colours(4)),'LineWidth',1.5); 
+    plot(time,four,'Color',cell2mat(ci_colours(5)),'LineWidth',1.5); 
+    plot(time,five,'Color',cell2mat(ci_colours(6)),'LineWidth',1.5); 
 
     xlim([min(dot_time),max(dot_time)])
     ylim([0.08 0.5])
@@ -304,6 +306,7 @@ avg_conf = squeeze(mean(par_conf_grp(beg:fin,:,:),1));
 
 %plot confusion matrix
 figure;
+%{
 subplot(1,2,1)
 imagesc(avg_conf)
 colormap(jet(512))
@@ -315,7 +318,7 @@ xlabel('Predicted Class')
 a = colorbar;
 a.Label.String = 'Proportion Classified';
     text(8,0.05,'DOTS - Parietal');
-
+%}
 % Create MEG Tuning Curves
 zero = avg_conf(:,1);
 one = avg_conf(:,2);
@@ -333,7 +336,9 @@ x = [0 1 2 3 4 5];
 colors = {'red','#FFA500','#32CD32','cyan','magenta','green'};
 for cl = 1:length(curves)
     curve = curves{cl};
-    plot(x,curve,'Color',colors{cl},'LineWidth' , 2)
+    plot(x,curve,'Color',colors{cl},'LineWidth',4); 
+     set(findall(gcf,'-property','FontSize'),'FontSize',20)
+
     xticks([0 1 2 3 4 5]);
     ylabel('Prop. Predicted')
     xlabel('True Number')
@@ -353,6 +358,7 @@ avg_conf = squeeze(mean(fro_conf_grp(beg:fin,:,:),1));
 
 %plot confusion matrix
 figure;
+%{
 subplot(1,2,1)
 imagesc(avg_conf)
 colormap(jet(512))
@@ -364,7 +370,7 @@ xlabel('Predicted Class')
 a = colorbar;
 a.Label.String = 'Proportion Classified';
     text(8,0.05,'DOTS - FRONTAL');
-
+%}
 % Create MEG Tuning Curves
 zero = avg_conf(:,1);
 one = avg_conf(:,2);
@@ -382,14 +388,16 @@ x = [0 1 2 3 4 5];
 colors = {'red','#FFA500','#32CD32','cyan','magenta','green'};
 for cl = 1:length(curves)
     curve = curves{cl};
-    plot(x,curve,'Color',colors{cl},'LineWidth' , 2)
+    plot(x,curve,'Color',colors{cl},'LineWidth',4); 
+     set(findall(gcf,'-property','FontSize'),'FontSize',20)
+
     xticks([0 1 2 3 4 5]);
     ylabel('Prop. Predicted')
     xlabel('True Number')
 
     hold on
 end
-legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'}); %true classes
+%legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'}); %true classes
 
 
 
@@ -479,6 +487,7 @@ caxis([0.14 0.45])
 colorbar;
 title('Arabic - Parietal')
 colormap('jet')
+ set(findall(gcf,'-property','FontSize'),'FontSize',20)
 
 
 %Plot accuracy over time frontal
@@ -525,6 +534,7 @@ caxis([0.14 0.45])
 colorbar;
 title('Arabic -  Frontal')
 colormap('jet')
+ set(findall(gcf,'-property','FontSize'),'FontSize',20)
 
 %% Confusion Over Time
 figure;
@@ -566,12 +576,12 @@ for true_class = 1:size(conf_grp,2)
     chance.Annotation.LegendInformation.IconDisplayStyle = 'off';
     
     
-    plot(time,zero,'Color',cell2mat(ci_colours(1)),'LineWidth',1.2);      
-    plot(time,one,'Color',cell2mat(ci_colours(2)),'LineWidth',1.2);    
-    plot(time,two,'Color',cell2mat(ci_colours(3)),'LineWidth',1.2); 
-    plot(time,three,'Color',cell2mat(ci_colours(4)),'LineWidth',1.2);
-    plot(time,four,'Color',cell2mat(ci_colours(5)),'LineWidth',1.2);
-    plot(time,five,'Color',cell2mat(ci_colours(6)),'LineWidth',1.2);
+    plot(time,zero,'Color',cell2mat(ci_colours(1)),'LineWidth',1.5);      
+    plot(time,one,'Color',cell2mat(ci_colours(2)),'LineWidth',1.5);    
+    plot(time,two,'Color',cell2mat(ci_colours(3)),'LineWidth',1.5); 
+    plot(time,three,'Color',cell2mat(ci_colours(4)),'LineWidth',1.5); 
+    plot(time,four,'Color',cell2mat(ci_colours(5)),'LineWidth',1.5); 
+    plot(time,five,'Color',cell2mat(ci_colours(6)),'LineWidth',1.5); 
 
     xlim([min(arabic_time),max(arabic_time)])
     ylim([0.08 0.5])
@@ -634,12 +644,12 @@ for true_class = 1:size(conf_grp,2)
     chance.Annotation.LegendInformation.IconDisplayStyle = 'off';
     
     
-    plot(time,zero,'Color',cell2mat(ci_colours(1)),'LineWidth',1.2);      
-    plot(time,one,'Color',cell2mat(ci_colours(2)),'LineWidth',1.2);    
-    plot(time,two,'Color',cell2mat(ci_colours(3)),'LineWidth',1.2); 
-    plot(time,three,'Color',cell2mat(ci_colours(4)),'LineWidth',1.2);
-    plot(time,four,'Color',cell2mat(ci_colours(5)),'LineWidth',1.2);
-    plot(time,five,'Color',cell2mat(ci_colours(6)),'LineWidth',1.2);
+    plot(time,zero,'Color',cell2mat(ci_colours(1)),'LineWidth',1.5);      
+    plot(time,one,'Color',cell2mat(ci_colours(2)),'LineWidth',1.5);    
+    plot(time,two,'Color',cell2mat(ci_colours(3)),'LineWidth',1.5); 
+    plot(time,three,'Color',cell2mat(ci_colours(4)),'LineWidth',1.5); 
+    plot(time,four,'Color',cell2mat(ci_colours(5)),'LineWidth',1.5); 
+    plot(time,five,'Color',cell2mat(ci_colours(6)),'LineWidth',1.5); 
 
     xlim([min(arabic_time),max(arabic_time)])
     ylim([0.08 0.5])
@@ -671,6 +681,7 @@ avg_conf = squeeze(mean(par_conf_grp(beg:fin,:,:),1));
 
 %plot confusion matrix
 figure;
+%{
 subplot(1,2,1)
 imagesc(avg_conf)
 colormap(jet(512))
@@ -682,6 +693,7 @@ xlabel('Predicted Class')
 a = colorbar;
 a.Label.String = 'Proportion Classified';
     text(8,0.05,'NUMERALS - Parietal');
+%}
 
 % Create MEG Tuning Curves
 zero = avg_conf(:,1);
@@ -700,7 +712,9 @@ x = [0 1 2 3 4 5];
 colors = {'red','#FFA500','#32CD32','cyan','magenta','green'};
 for cl = 1:length(curves)
     curve = curves{cl};
-    plot(x,curve,'Color',colors{cl},'LineWidth' , 2)
+    plot(x,curve,'Color',colors{cl},'LineWidth',4); 
+     set(findall(gcf,'-property','FontSize'),'FontSize',20)
+
     xticks([0 1 2 3 4 5]);
     ylabel('Prop. Predicted')
     xlabel('True Number')
@@ -717,6 +731,7 @@ avg_conf = squeeze(mean(fro_conf_grp(beg:fin,:,:),1));
 
 %plot confusion matrix
 figure;
+%{
 subplot(1,2,1)
 imagesc(avg_conf)
 colormap(jet(512))
@@ -728,6 +743,7 @@ xlabel('Predicted Class')
 a = colorbar;
 a.Label.String = 'Proportion Classified';
     text(8,0.05,'NUMERALS - Frontal');
+%}
 
 % Create MEG Tuning Curves
 zero = avg_conf(:,1);
@@ -746,7 +762,9 @@ x = [0 1 2 3 4 5];
 colors = {'red','#FFA500','#32CD32','cyan','magenta','green'};
 for cl = 1:length(curves)
     curve = curves{cl};
-    plot(x,curve,'Color',colors{cl},'LineWidth' , 2)
+    plot(x,curve,'Color',colors{cl},'LineWidth',4); 
+     set(findall(gcf,'-property','FontSize'),'FontSize',20)
+
     xticks([0 1 2 3 4 5]);
     ylabel('Prop. Predicted')
     xlabel('True Number')

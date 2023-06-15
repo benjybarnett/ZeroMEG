@@ -58,7 +58,7 @@ clear tmp_data_muscle tmp_data_filtered;
 
 
 % Blinks during stimulus
-if ~contains(cfg0.dataName,'arabic')
+if cfg0.blinks
     cfg                     = [];
     cfg.channel             = {'UADC001','UADC003'}; %eye tracker X, pupil diameter
     tmp_data                = ft_selectdata(cfg, data);
@@ -89,7 +89,7 @@ cfg.channel             = 'MEG';
 cfg.megscale = 1;
 cfg.artfctdef.overall.artifact = data.sampleinfo(removed_n_overall, :);
 cfg.artfctdef.muscle.artifact = data.sampleinfo(removed_n_muscle, :);
-if ~contains(cfg0.dataName,'arabic')
+if cfg0.blinks
     cfg.artfctdef.blinks.artifact = data.sampleinfo(removed_n_blinks, :);    
 end
 cfg.preproc.hpfilter    = 'no';

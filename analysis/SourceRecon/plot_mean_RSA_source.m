@@ -55,9 +55,9 @@ function  plot_mean_RSA_source(cfg, subjects)
     fill(x, inBetween,'b', 'FaceColor',cfg.shadecolor{1},'FaceAlpha','0.2','EdgeAlpha','0.2','EdgeColor','none');
     hold on;
     if cfg.dashed
-        plot(arabic_time, mean_arabic_rho,'--','Color', cfg.linecolor{1}, 'LineWidth', 1);
+        plot(arabic_time, mean_arabic_rho,'--','Color', cfg.linecolor{1}, 'LineWidth', 3);
     else
-        plot(arabic_time, mean_arabic_rho,'Color', cfg.linecolor{1}, 'LineWidth', 1);
+        plot(arabic_time, mean_arabic_rho,'Color', cfg.linecolor{1}, 'LineWidth', 3);
 
     end
     xline(0,'black--');
@@ -77,12 +77,15 @@ function  plot_mean_RSA_source(cfg, subjects)
     fill(x, inBetween,'b', 'FaceColor',cfg.shadecolor{2},'FaceAlpha','0.2','EdgeAlpha','0.2','EdgeColor','none');
     hold on;
     if cfg.dashed
-        plot(dot_time, mean_dot_rho,'--','Color', cfg.linecolor{2}, 'LineWidth', 1);
+        plot(dot_time, mean_dot_rho,'--','Color', cfg.linecolor{2}, 'LineWidth', 3);
     else
-        plot(dot_time, mean_dot_rho,'Color', cfg.linecolor{2}, 'LineWidth', 1);
+        plot(dot_time, mean_dot_rho,'Color', cfg.linecolor{2}, 'LineWidth', 3);
 
     end
-    legend({'','Numerals - Graded Zero','','','','Dots - Graded Zero','','Numerals - Discrete Zero','','','','Dots - Discrete Zero'})
+    legend({'','Symbolic - Graded Zero','','','','Non-Symbolic - Graded Zero','','Symbolic - Discrete Zero','','','','Non-Symbolic - Discrete Zero'})
     title(cfg.region)
+     set(findall(gcf,'-property','FontSize'),'FontSize',20)
+legend('Location','eastoutside')
+
     
 end

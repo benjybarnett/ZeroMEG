@@ -44,6 +44,8 @@ subjects = {
     'sub016'
     'sub017'
     'sub018'
+    'sub019'
+    'sub020'
     }; 
 
 
@@ -53,6 +55,7 @@ meanRTs = {};
 for subj = 1:length(subjects)
     subject = subjects{subj};
     
+    cfg = [];
     cfg.root = 'D:\bbarnett\Documents\Zero\data\Raw';
     cfg.plot = false;
     [subjCurves{subj},meanRTs{subj}] = BehaviourAnalysis(cfg,subject);
@@ -92,6 +95,7 @@ for subj = 1:length(subjects)
     cfg.stimOn = [0 0]; %dont look for blinks as too long a trial, one blink doesnt ruin whole trial
     cfg.dataName = 'arabic_data_preproc';
     cfg.saveName = 'arabic_data_VAR';
+    cfg.blinks = 0;
     PreprocessingVAR_BOB(cfg,subject);
    
     %dot
@@ -101,6 +105,7 @@ for subj = 1:length(subjects)
     cfg.stimOn = [0 0.25];
     cfg.dataName = 'dot_data_preproc';
     cfg.saveName = 'dot_data_VAR';
+    cfg.blinks = 0;
     PreprocessingVAR_BOB(cfg,subject);
     
     
@@ -214,7 +219,7 @@ for subj = 1:length(subjects)
     cfg.nMeanS = 7;
     cfg.metric = {'acc','conf'};
     cfg.output_prefix =  {'within_arabic_','within_dot_'}; %must be number data first
-    cfg.plot = false;
+    cfg.plot = true;
     cfg.channel = 'MEG';
     multiclass(cfg,subject);
     
@@ -430,7 +435,7 @@ for j = 1:length(regions)
         cfg.linecolor = colours;
         cfg.shadecolor = cfg.linecolor;
         cfg.mRDM_file = model;
-        cfg.ylim = [-0.4 1];
+        cfg.ylim = [-0.3 0.8];
         if m > 1
             cfg.dashed = true;
         else

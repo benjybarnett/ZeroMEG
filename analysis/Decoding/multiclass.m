@@ -38,7 +38,7 @@ dot_data = ft_selectdata(cfgS,dot_data);
 cfgS = [];
 cfgS.trials = dot_data.trialinfo(:,8) ~= 0;
 dot_data = ft_selectdata(cfgS,dot_data);
-cfgS.trials = arabic_data.trialinfo(:,6) ~= 0;
+cfgS.trials = arabic_data.trialinfo(:,6) ~= 0 ;
 arabic_data = ft_selectdata(cfgS,arabic_data);
 
 
