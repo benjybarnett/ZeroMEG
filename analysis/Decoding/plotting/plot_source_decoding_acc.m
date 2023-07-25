@@ -16,6 +16,9 @@ subjects = {
     'sub016'
     'sub017'
     'sub018'
+    'sub019'
+    'sub020'
+    'sub021'
     };
 timeon = 0;
 timeoff = 0.5;
@@ -306,7 +309,7 @@ avg_conf = squeeze(mean(par_conf_grp(beg:fin,:,:),1));
 
 %plot confusion matrix
 figure;
-%{
+
 subplot(1,2,1)
 imagesc(avg_conf)
 colormap(jet(512))
@@ -318,7 +321,7 @@ xlabel('Predicted Class')
 a = colorbar;
 a.Label.String = 'Proportion Classified';
     text(8,0.05,'DOTS - Parietal');
-%}
+
 % Create MEG Tuning Curves
 zero = avg_conf(:,1);
 one = avg_conf(:,2);
@@ -345,7 +348,7 @@ for cl = 1:length(curves)
 
     hold on
 end
-%legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'}); %true classes
+legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'}); %true classes
 
 
 
@@ -358,7 +361,7 @@ avg_conf = squeeze(mean(fro_conf_grp(beg:fin,:,:),1));
 
 %plot confusion matrix
 figure;
-%{
+
 subplot(1,2,1)
 imagesc(avg_conf)
 colormap(jet(512))
@@ -370,7 +373,7 @@ xlabel('Predicted Class')
 a = colorbar;
 a.Label.String = 'Proportion Classified';
     text(8,0.05,'DOTS - FRONTAL');
-%}
+
 % Create MEG Tuning Curves
 zero = avg_conf(:,1);
 one = avg_conf(:,2);
@@ -397,7 +400,7 @@ for cl = 1:length(curves)
 
     hold on
 end
-%legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'}); %true classes
+legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'}); %true classes
 
 
 
@@ -681,7 +684,7 @@ avg_conf = squeeze(mean(par_conf_grp(beg:fin,:,:),1));
 
 %plot confusion matrix
 figure;
-%{
+
 subplot(1,2,1)
 imagesc(avg_conf)
 colormap(jet(512))
@@ -693,7 +696,7 @@ xlabel('Predicted Class')
 a = colorbar;
 a.Label.String = 'Proportion Classified';
     text(8,0.05,'NUMERALS - Parietal');
-%}
+
 
 % Create MEG Tuning Curves
 zero = avg_conf(:,1);
@@ -721,7 +724,7 @@ for cl = 1:length(curves)
 
     hold on
 end
-%legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'}); %true classes
+legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'}); %true classes
 
 %frontal 
 beg = find(arabic_time == timeon);
@@ -731,7 +734,7 @@ avg_conf = squeeze(mean(fro_conf_grp(beg:fin,:,:),1));
 
 %plot confusion matrix
 figure;
-%{
+
 subplot(1,2,1)
 imagesc(avg_conf)
 colormap(jet(512))
@@ -743,7 +746,6 @@ xlabel('Predicted Class')
 a = colorbar;
 a.Label.String = 'Proportion Classified';
     text(8,0.05,'NUMERALS - Frontal');
-%}
 
 % Create MEG Tuning Curves
 zero = avg_conf(:,1);
@@ -771,6 +773,6 @@ for cl = 1:length(curves)
 
     hold on
 end
-%legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'}); %true classes
+legend({'Zero' 'One' 'Two' 'Three' 'Four' 'Five'}); %true classes
 
 

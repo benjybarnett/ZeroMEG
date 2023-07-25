@@ -1,4 +1,4 @@
-function plot_multiclass_temp(cfg0, subjects)
+function plot_multiclass_temp_cross(cfg0, subjects)
 % Plot Temporal Generalisation Results for a Multiclass Classifier
 % Plots Diagonal and Full Temporal Generalisation Matrix
 
@@ -6,20 +6,19 @@ function plot_multiclass_temp(cfg0, subjects)
     arabic_time = arabic_time.arabic_time;
 
     dot_time = load("dot_time.mat");
-    dot_time = dot_time.dot_time;
+    dot_time = arabic_time;
     %% Load Classifier Accuracies and Confusion Matrices
     for subj =1:length(subjects)
         subject = subjects{subj};
         disp(subject)
 
         if strcmp(cfg0.decoding_type,'cross')
-            dot_time = arabic_time;
             %Accuracy
             arabic_acc = load(fullfile(cfg0.root,cfg0.output_path,subject,'cross_arabic_acc.mat'));
             dot_acc = load(fullfile(cfg0.root,cfg0.output_path,subject,'cross_dot_acc.mat'));
             %Confusion Matrices
-            arabic_conf_tmp = load(fullfile(cfg0.root,cfg0.output_path,subject,'cross_arabic_conf.mat'));
-            dot_conf_tmp = load(fullfile(cfg0.root,cfg0.output_path,subject,'cross_dot_conf.mat'));
+            arabic_conf_tmp = load(fullfile(cfg0.root,cfg0.output_path,subject,'train_arabic_conf.mat'));
+            dot_conf_tmp = load(fullfile(cfg0.root,cfg0.output_path,subject,'train_dot_conf.mat'));
         elseif strcmp(cfg0.decoding_type,'within')
             %Accuracy
             arabic_acc = load(fullfile(cfg0.root,cfg0.output_path,subject,'within_arabic_acc.mat'));
@@ -59,20 +58,21 @@ function plot_multiclass_temp(cfg0, subjects)
         
 
         clear arabic_conf dot_conf arabic_conf_tmp dot_conf_tmp
+
     end
-    
+
     %% Compute Average Accuracies
     mean_arabic_acc = squeeze(mean(all_arabic_acc,1));
     mean_dot_acc = squeeze(mean(all_dot_acc,1));
 
     %% Compute Average Confusion Matrices
-    
+  
     mean_arabic_conf = squeeze(mean(all_arabic_conf,1));
     mean_dot_conf = squeeze(mean(all_dot_conf,1));
     
     %% Plot Temporal Generalisation Matrices
     if strcmp(cfg0.decoding_type,'cross')
-        titles = {'Train on Number, Test on Detection', 'Train on Detection, Test on Number','Train on Number: Diagonal','Train on Detection: Diagonal'};
+        titles = {'Train on Numerals, Test on Dots', 'Train on Dots, Test on Numerals','Train on Numerals: Diagonal','Train on Dots: Diagonal'};
     else
         titles = {'Arabic Decoding', 'Dot Decoding','Arabic Decoding: Diagonal','Dot Decoding: Diagonal'};
     end
@@ -149,9 +149,9 @@ function plot_multiclass_temp(cfg0, subjects)
     xlabel('Time (s)')
 
     %% Plot Confusion Matrices
-    
+   
     if strcmp(cfg0.decoding_type,'cross')
-        confusion_titles = {'Zero','One','Two','Three','Four','Five','Zero','One','Two','Three','Four','Five'};
+        confusion_titles = {'Abs-High','Abs-Low','Pres-Low','Pres-High','Zero','One','Two','Three'};
     else
         confusion_titles = {'A-Zero','A-One','A-Two','A-Three','A-Four','A-Five','D-Zero','D-One','D-Two','D-Three','D-Four','D-Five'};
     end

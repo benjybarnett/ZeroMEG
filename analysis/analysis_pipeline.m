@@ -46,6 +46,8 @@ subjects = {
     'sub018'
     'sub019'
     'sub020'
+    'sub021'
+    'sub022'
     }; 
 
 
@@ -153,6 +155,7 @@ for subj = 1:length(subjects)
     cfg.arabic_prestim = 0.1;
     cfg.dot_poststim = 0.8;
     cfg.dot_prestim = 0.2;
+    EpochTrialsAlternative(cfg,subject);
     EpochTrials(cfg,subject);
 
 end
@@ -230,6 +233,30 @@ cfg.figName = cfg.accFile;
 cfg.ylim = [0 0.7];
 cfg.clim = [0.0 0.7];
 cfg.decoding_type = 'within';
+plot_multiclass_temp(cfg,subjects);
+
+%% Cross Condition Multiclass Decoding
+for subj = 1:length(subjects)
+    subject = subjects{subj};
+    cfg  = [];
+    cfg.root = 'D:\bbarnett\Documents\Zero\data';
+    cfg.output_path = 'Analysis/MEG/Multiclass_Decoding/OverTime';
+    cfg.channels = 'MEG';
+    cfg.nMeanS = 7;
+    cfg.metric = {'acc','conf'};
+    cfg.output_prefix =  {'cross_arabic_','cross_dot_'}; %must be number data first
+    cfg.plot = false;
+    cfg.channel = 'MEG';
+    cfg.sysRemove =true;
+    multiclass_cross(cfg,subject);
+    
+end
+% Plot Group Average
+cfg.accFile = 'multiclass_cross';
+cfg.figName = cfg.accFile;
+cfg.ylim = [0.1 0.3];
+cfg.clim = [0.1 0.3];
+cfg.decoding_type = 'cross';
 plot_multiclass_temp(cfg,subjects);
 
 
@@ -379,7 +406,7 @@ for subj = 1:length(subjects)
     cfg.roi_name = 'frontal';
     cfg.group_size = 5;
     cfg.mRDM_path ='D:\bbarnett\Documents\Zero\scripts\ZeroMEG\analysis';
-    cfg.mRDM_file = 'discrete_zero_rdm';
+    cfg.mRDM_file = 'graded_zero_rdm';
     cfg.outdir = 'Analysis\MEG\Source\RSA\dots';
     cfg.sensor_data = 'dot_trials.mat';
     cfg.num_predictors = 6;

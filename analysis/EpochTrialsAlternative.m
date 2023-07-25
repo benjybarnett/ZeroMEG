@@ -11,11 +11,11 @@ data = struct2cell(data); arabic_data = data{1};
 
 
 %for sub004, block 1 comes out with NaNs because PD signal so weak can't epoch properly
-
+%{
 cfg = [];
 cfg.trials = arabic_data.trialinfo(:,1)> 3;
 arabic_data = ft_selectdata(cfg,arabic_data);
-
+%}
 
 %% Create new trl matrix
 
@@ -32,17 +32,13 @@ postsamples = cfg0.arabic_poststim * arabic_data.fsample;
 for iTrial = 1:length(lightDiodeSignal.trial)
     %figure
     %plot(lightDiodeSignal.trial{iTrial})
-    5hold on
-    [~,ind] = mink(diff(lightDiodeSignal.trial{iTrial}),10); %get sample index of 10 stim-onset times per trial
-    ind = sort(ind); %sort them from first to last
-    
-
+    %hold on
     %%
     PD_on = lightDiodeSignal.trial{iTrial} < (mean(lightDiodeSignal.trial{iTrial})-(0.5*std(lightDiodeSignal.trial{iTrial}))); %get when the PD is on (when is less than 1 SD below mean)
     pdind = find(PD_on);
     %xline(pdind)
     [~,ind] = maxk(diff(pdind),10);
-    ind = sort(pdind(ind+1));
+    ind = sort(pdind(ind+1))-2; %hard coded '-2' seems to align the photodiode better to 0
     %xline(ind)
     %%
 

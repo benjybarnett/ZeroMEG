@@ -4,7 +4,7 @@ function EpochTrials(cfg0,subject)
 
 saveDir                     = fullfile(cfg0.datadir,subject);
 if ~exist(saveDir,'dir'); mkdir(saveDir); end
-
+%{
 %% Arabic Datasets 
 data = load(fullfile(cfg0.datadir,subject,'arabic_data.mat'));
 data = struct2cell(data); arabic_data = data{1};
@@ -82,7 +82,7 @@ save(fullfile(saveDir,cfg0.arabicSaveName),'arabic_trials','-v7.3')
 
 
 clear trl arabic_trials arabic_data lightDiodeSignal
-
+%}
 %% Dots
 
 data = load(fullfile(cfg0.datadir,subject,'dot_data.mat'));
