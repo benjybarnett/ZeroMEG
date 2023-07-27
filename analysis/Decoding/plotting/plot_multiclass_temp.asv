@@ -439,7 +439,7 @@ function plot_multiclass_temp(cfg0, subjects)
             
         end        
         yline(1/5,'--');
-        yline(1/4,'--')
+        yline(1/4,'r--')
 
         subplot(1,2,2)  
         for num = 1:length(all_dots)
@@ -468,7 +468,7 @@ function plot_multiclass_temp(cfg0, subjects)
             hold on
         end
         yline(1/5,'--');
-        yline(1/4,'--')
+        yline(1/4,'r--')
         legend('','No Zero','','No One','','No Two','','No Three','','No Four','','No Five','','No Zero or Five');
 
     end
