@@ -67,7 +67,7 @@ smoothed_arabic_data = zeros(size(arabic_data.trial));
 for trial = 1:size(arabic_data.trial,1)
     smoothed_arabic_data(trial,:,:) = ft_preproc_smooth(squeeze(arabic_data.trial(trial,:,:)),cfg0.nMeanS);
 end
-%{
+
 %% Time x Time Decoding
 cfgS = [];
 cfgS.classifier = 'multiclass_lda';
@@ -103,11 +103,11 @@ elseif length(cfg0.metric) == 1
         save(fullfile(outputDir,[cfg0.output_prefix{2},cfg0.metric{2}]),'train_dot_conf');
     end
 end
-%}
+
 
 %% Systematically Test Without a number
 if cfg0.sysRemove 
-    for num = 6:6
+    for num = 0:6
         cfgS = [];
         cfgS.classifier = 'multiclass_lda';
         cfgS.metric = cfg0.metric;

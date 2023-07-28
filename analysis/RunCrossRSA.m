@@ -36,7 +36,7 @@ function rhos = RunCrossRSA(cfg0,tl_data,des_mat)
     %% Load the Model RDM
     mRDM = load(fullfile(cfg0.mRDM_path,[cfg0.mRDM_file,'.mat']));
     mRDM = struct2cell(mRDM); mRDM = mRDM{1};  
-    mRDM = mRDM(end-cfg0.num_predictors+1:end,1:cfg0.num_predictors);% get lower left quadrant (i.e. cross-condition section)
+    mRDM = mRDM(end-(cfg0.num_predictors/2)+1:end,1:cfg0.num_predictors/2);% get lower left quadrant (i.e. cross-condition section)
     mRDM = mRDM(:);
 
 
@@ -44,7 +44,7 @@ function rhos = RunCrossRSA(cfg0,tl_data,des_mat)
     rhos = [];
     for n = 1:size(nRDMs,3)
         nRDM = smoothnRDMs(:,:,n);
-        nRDM = nRDM(end-cfg0.num_predictors+1:end,1:cfg0.num_predictors);% get lower left quadrant (i.e. cross-condition section)
+        nRDM = nRDM(end-(cfg0.num_predictors/2)+1:end,1:cfg0.num_predictors/2);% get lower left quadrant (i.e. cross-condition section)
         nRDM = nRDM(:);
         rho = corr(nRDM,mRDM,'Type','Kendall');
         rhos = [rhos rho];

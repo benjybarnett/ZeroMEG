@@ -48,6 +48,7 @@ subjects = {
     'sub020'
     'sub021'
     'sub022'
+    'sub023'
     }; 
 
 
@@ -259,6 +260,40 @@ cfg.clim = [0.1 0.3];
 cfg.decoding_type = 'cross';
 plot_multiclass_temp(cfg,subjects);
 
+%% Cross Condition RSA
+progressbar;
+for subj = 1:length(subjects)
+    subject = subjects{subj};
+    cfg  = [];
+    cfg.root = 'D:\bbarnett\Documents\Zero\data';
+    cfg.mRDM_path ='D:\bbarnett\Documents\Zero\scripts\ZeroMEG\analysis';
+    cfg.mRDM_file = 'shared_numbers_rdm';
+    cfg.num_predictors = 12;
+    cfg.output_path = 'Analysis/MEG/RSA/CrossModality';
+    cfg.outputName = 'RSA_over_time.mat';
+    cfg.channels = 'MEG';
+    cfg.plot = false;
+
+    RSA_Cross(cfg,subject);
+    progressbar(subj/length(subjects));
+
+end
+% Plot
+models = {'shared_numbers_rdm','shared_numbers_discrete_rdm'};
+linecolor = {'magenta','cyan'};
+figure;
+for model = 1:length(models)
+    cfg.linecolor = linecolor{model};
+    cfg.shadecolor = linecolor{model};
+    cfg.mRDM_file = models{model};
+    cfg.ylim = [-0.15 0.15];
+    cfg.task = 'CrossModality';
+    cfg.title = 'Domain General Numerosity With/Without Distance Effect';
+    plot_mean_single_RSA(cfg,subjects);
+    hold on
+end
+legend('','With Distance Effect','','','','Without Distance Effect')
+
 
 %% Representation of Number: Confusion Matrix
 for subj = 1:length(subjects)
@@ -297,7 +332,7 @@ cfg.mRDM_file = model;
 cfg.task = 'dots';
 cfg.ylim = [-0.4 1];
 cfg.title = 'Dot Stim-Set Control';
-plot_mean_control_RSA(cfg,subjects)
+plot_mean_single_RSA(cfg,subjects)
 
 % Arabic Control
 for subj = 1:length(subjects)
@@ -320,7 +355,9 @@ cfg.mRDM_file = model;
 cfg.ylim = [-0.4 1];
 cfg.task = 'arabic';
 cfg.title = 'Arabic Colour Control';
-plot_mean_control_RSA(cfg,subjects)
+plot_mean_single_RSA(cfg,subjects)
+
+
 
 
 %% END SANITY CHECKS
@@ -378,6 +415,36 @@ for subj = 1:length(subjects)
     cfg.roiLabelIdxs = {'Parietal_Sup_L'	'Parietal_Sup_R'	'Parietal_Inf_L'	'Parietal_Inf_R' 'SupraMarginal_L'	'SupraMarginal_R'	'Angular_L'	'Angular_R' 'Precuneus_L' 'Precuneus_R'};
     cfg.roi_name = 'parietal';
     SourceDecode(cfg,subject); %parietal decoding
+
+    progressbar(subj/length(subjects));
+    
+end
+toc;
+
+%Source ROI Cross-Decoding
+tic;
+progressbar;
+for subj = 1:length(subjects)
+    subject = subjects{subj};
+
+    disp(subject);
+    
+    cfg = [];
+    cfg.root = 'D:\bbarnett\Documents\Zero\data';
+    cfg.rawDir =  'D:\bbarnett\Documents\Zero\data\Raw';
+    cfg.vChanOutDir = 'Analysis\MEG\Source\virtualchannels\';
+    cfg.roi_name = 'frontal';
+    cfg.tSmooth = 7;
+    cfg.group_size = 5;
+    cfg.pca =false;
+    cfg.outdir = 'Analysis\MEG\Source\Decoding\Cross\';
+    cfg.metric = {'accuracy' 'confusion'};
+    cfg.timepoints = [0.35 0.6];
+    SourceCrossDecode(cfg,subject); %frontal decoding
+
+    cfg.roi_name = 'parietal';
+    SourceCrossDecode(cfg,subject); %parietal decoding
+
 
     progressbar(subj/length(subjects));
     
@@ -688,7 +755,7 @@ cfg.mRDM_file = model;
 cfg.task = 'dots';
 cfg.ylim = [-0.4 1];
 cfg.title = 'Dot Stim-Set Control';
-plot_mean_control_RSA(cfg,subjects)
+plot_mean_single_RSA(cfg,subjects)
 
 % Arabic
 for subj = 1:length(subjects)
@@ -711,7 +778,7 @@ cfg.mRDM_file = model;
 cfg.ylim = [-0.4 1];
 cfg.task = 'arabic';
 cfg.title = 'Arabic Colour Control';
-plot_mean_control_RSA(cfg,subjects)
+plot_mean_single_RSA(cfg,subjects)
 % Save Plot
 outputDir = fullfile(cfg.root,'Analysis/MEG/RSA/Controls/');
 fig = gcf;
