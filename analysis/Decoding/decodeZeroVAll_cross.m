@@ -1,4 +1,4 @@
-function multiclass_cross(cfg0,subject)
+function decodeZeroVAll_cross(cfg0,subject)
 
 %% Save Path
 outputDir = fullfile(cfg0.root,cfg0.output_path,subject);
@@ -58,6 +58,7 @@ cfgS = [];
 cfgS.latency = [min(arabic_time),max(arabic_time)];
 dot_data = ft_selectdata(cfgS,dot_data);
 dot_time = dot_data.time;
+%{
 %% Smooth Data
 smoothed_dot_data = zeros(size(dot_data.trial));
 for trial = 1:size(dot_data.trial,1)
@@ -68,14 +69,22 @@ for trial = 1:size(arabic_data.trial,1)
     smoothed_arabic_data(trial,:,:) = ft_preproc_smooth(squeeze(arabic_data.trial(trial,:,:)),cfg0.nMeanS);
 end
 
+%% Undersample Non-Zero Class
+%So each non-zero numerosity appears the same number of times
+[smoothed_arabic_data,arabic_labels] = UndersampleBinarise([],smoothed_arabic_data,arabic_data.trialinfo(:,4)+1);
+[smoothed_dot_data,dot_labels] = UndersampleBinarise([],smoothed_dot_data,dot_data.trialinfo(:,5)+1);
+
+%% Binarise labels
+arabic_labels = (arabic_labels == 1)+1;
+dot_labels = (dot_labels == 1)+1;
 %% Time x Time Decoding
 cfgS = [];
-cfgS.classifier = 'multiclass_lda';
+cfgS.classifier = 'lda';
 cfgS.metric = cfg0.metric;
 cfgS.preprocess ={'undersample','average_samples'};
 cfgS.repeat = 1;
-[results_arabic,~] = mv_classify_timextime(cfgS,smoothed_arabic_data,arabic_data.trialinfo(:,4)+1,smoothed_dot_data,dot_data.trialinfo(:,5)+1);
-[results_dot,~] = mv_classify_timextime(cfgS,smoothed_dot_data,dot_data.trialinfo(:,5)+1,smoothed_arabic_data,arabic_data.trialinfo(:,4)+1);
+[results_arabic,~] = mv_classify_timextime(cfgS,smoothed_arabic_data,arabic_labels,smoothed_dot_data,dot_labels);
+[results_dot,~] = mv_classify_timextime(cfgS,smoothed_dot_data,dot_labels,smoothed_arabic_data,arabic_labels);
 %Get accuracy and confusion matrices separately
 if length(cfg0.metric) > 1
     acc_mask = strcmp(cfg0.metric, 'acc'); acc_location = find(acc_mask); conf_location = find(~acc_mask);    
@@ -93,77 +102,15 @@ elseif length(cfg0.metric) == 1
         train_arabic_acc = results_arabic'; 
         train_dot_acc = results_dot';
         %Save
-        save(fullfile(outputDir,[cfg0.output_prefix{1} cfg0.metric{1}]),'train_arabic_acc');
-        save(fullfile(outputDir,[cfg0.output_prefix{2},cfg0.metric{1}]),'train_dot_acc');
+        save(fullfile(outputDir,[cfg0.output_prefix{1} cfg0.metric{1}]),'cross_arabic_acc');
+        save(fullfile(outputDir,[cfg0.output_prefix{2},cfg0.metric{1}]),'cross_dot_acc');
     elseif strcmp(cfg0.metric, 'conf')
         train_arabic_conf = results_arabic;
         train_dot_conf = results_dot;
         %Save
-        save(fullfile(outputDir,[cfg0.output_prefix{1},cfg0.metric{1}]),'train_arabic_conf');
+        save(fullfile(outputDir,[cfg0.output_prefix{1},cfg0.metric{1}]),'cross_arabic_conf');
         save(fullfile(outputDir,[cfg0.output_prefix{2},cfg0.metric{2}]),'train_dot_conf');
     end
-end
-
-
-%% Systematically Test Without a number
-if cfg0.sysRemove 
-    for num = 0:6
-        cfgS = [];
-        cfgS.classifier = 'multiclass_lda';
-        cfgS.metric = cfg0.metric;
-        cfgS.preprocess ={'undersample','average_samples'};
-        cfgS.repeat = 1;
-        if num < 6
-            smoothed_arabic_data_tmp = smoothed_arabic_data(arabic_data.trialinfo(:,4)~=num,:,:);
-            arabic_labels = arabic_data.trialinfo(arabic_data.trialinfo(:,4)~=num,4);
-        else
-            smoothed_arabic_data_tmp = smoothed_arabic_data((arabic_data.trialinfo(:,4)~=0 & arabic_data.trialinfo(:,4)~=5) ,:,:);
-            arabic_labels = arabic_data.trialinfo((arabic_data.trialinfo(:,4)~=0 & arabic_data.trialinfo(:,4)~=5),4);
-        end
-            %relabel labels so they go from 1:5
-        u = unique(arabic_labels);
-        n_classes = length(u);
-        if ~all(ismember(arabic_labels,1:n_classes))
-            warning('Class labels should consist of integers 1 (class 1), 2 (class 2), 3 (class 3) and so on. Relabelling them accordingly.');
-            newlabel = nan(numel(arabic_labels), 1);
-            for i = 1:n_classes
-                newlabel(arabic_labels==u(i)) = i; % set to 1:nth classes
-            end
-            arabic_labels = newlabel;
-        end
-        
-        if num < 6
-            smoothed_dot_data_tmp = smoothed_dot_data(dot_data.trialinfo(:,5)~=num,:,:);
-            dot_labels = dot_data.trialinfo(dot_data.trialinfo(:,5)~=num,5);
-        else
-            smoothed_dot_data_tmp = smoothed_dot_data((dot_data.trialinfo(:,5)~=0 & dot_data.trialinfo(:,5) ~=5),:,:);
-            dot_labels = dot_data.trialinfo((dot_data.trialinfo(:,5)~=0 & dot_data.trialinfo(:,5) ~=5),5);
-        end
-
-        %relabel labels so they go from 1:5
-        u = unique(dot_labels);
-        n_classes = length(u);
-        if ~all(ismember(dot_labels,1:n_classes))
-            warning('Class labels should consist of integers 1 (class 1), 2 (class 2), 3 (class 3) and so on. Relabelling them accordingly.');
-            newlabel = nan(numel(dot_labels), 1);
-            for i = 1:n_classes
-                newlabel(dot_labels==u(i)) = i; % set to 1:nth classes
-            end
-            dot_labels = newlabel;
-        end
-
-        [results_arabic,~] = mv_classify_timextime(cfgS,smoothed_arabic_data_tmp,arabic_labels,smoothed_dot_data_tmp,dot_labels);
-        [results_dot,~] = mv_classify_timextime(cfgS,smoothed_dot_data_tmp,dot_labels,smoothed_arabic_data_tmp,arabic_labels);
-        %Get accuracy and confusion matrices separately
-        acc_mask = strcmp(cfg0.metric, 'acc'); acc_location = find(acc_mask); conf_location = find(~acc_mask);    
-        train_arabic_acc = results_arabic{acc_location}';%coz mvpa light has axes switched
-        train_dot_acc = results_dot{acc_location}';%coz mvpa light has axes switched
-        %Save
-        save(fullfile(outputDir,[cfg0.output_prefix{1},cfg0.metric{acc_location},'_no_',num2str(num)]),'train_arabic_acc');
-        save(fullfile(outputDir,[cfg0.output_prefix{2},cfg0.metric{acc_location},'_no_',num2str(num)]),'train_dot_acc');
-
-    end
-
 end
 
 
@@ -192,4 +139,60 @@ if cfg0.plot
     colormap('jet')
     title('Train on Dots, Test on Arabic')
 end
+%}
+if cfg0.sysRemove
+        for num = 1:5
+
+            %% Smooth Data
+            smoothed_dot_data = zeros(size(dot_data.trial));
+            for trial = 1:size(dot_data.trial,1)
+                smoothed_dot_data(trial,:,:) = ft_preproc_smooth(squeeze(dot_data.trial(trial,:,:)),cfg0.nMeanS);
+            end
+            smoothed_arabic_data = zeros(size(arabic_data.trial));
+            for trial = 1:size(arabic_data.trial,1)
+                smoothed_arabic_data(trial,:,:) = ft_preproc_smooth(squeeze(arabic_data.trial(trial,:,:)),cfg0.nMeanS);
+            end
+
+            %% Remove certain numerosity
+            smoothed_arabic_data = smoothed_arabic_data(arabic_data.trialinfo(:,4) ~= num,:,:);
+            arabic_labels = arabic_data.trialinfo(arabic_data.trialinfo(:,4) ~= num,4);
+            smoothed_dot_data = smoothed_dot_data(dot_data.trialinfo(:,5) ~= num,:,:);
+            dot_labels = dot_data.trialinfo(dot_data.trialinfo(:,5) ~= num,5);
+            %Relabel from 1:5
+            dot_labels = Relabel(dot_labels);
+            arabic_labels = Relabel(arabic_labels);
+
+            %% Undersample Non-Zero Class
+            %So each non-zero numerosity appears the same number of times
+            cfgB = [];
+            cfgB.numNTClass = 4;
+            [smoothed_arabic_data,arabic_labels] = UndersampleBinarise(cfgB,smoothed_arabic_data,arabic_labels);
+            [smoothed_dot_data,dot_labels] = UndersampleBinarise(cfgB,smoothed_dot_data,dot_labels);
+
+            %% Binarise labels
+            arabic_labels = (arabic_labels == 1)+1;
+            dot_labels = (dot_labels == 1)+1;
+
+            %% Within Time x Time Decoding
+            cfgS = [];
+            cfgS.classifier = 'lda';
+            cfgS.metric = cfg0.metric;
+            cfgS.preprocess ={'undersample','average_samples'};
+            cfgS.repeat = 1;
+            [results_arabic,~] = mv_classify_timextime(cfgS,smoothed_arabic_data,arabic_labels,smoothed_dot_data,dot_labels);
+            [results_dot,~] = mv_classify_timextime(cfgS,smoothed_dot_data,dot_labels,smoothed_arabic_data,arabic_labels);
+            %Get accuracy and confusion matrices separately
+            acc_mask = strcmp(cfg0.metric, 'acc'); acc_location = find(acc_mask); conf_location = find(~acc_mask);
+            train_arabic_acc = results_arabic{acc_location}';%coz mvpa light has axes switched
+            train_dot_acc = results_dot{acc_location}';%coz mvpa light has axes switched
+            %Save
+            save(fullfile(outputDir,[cfg0.output_prefix{1},cfg0.metric{acc_location},'_no_',num2str(num)]),'train_arabic_acc');
+            save(fullfile(outputDir,[cfg0.output_prefix{2},cfg0.metric{acc_location},'_no_',num2str(num)]),'train_dot_acc');
+
+
+        end
+
+
+    end
+
 end

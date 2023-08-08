@@ -120,17 +120,9 @@ if cfg0.sysRemove
             smoothed_arabic_data_tmp = smoothed_arabic_data((arabic_data.trialinfo(:,4)~=0 & arabic_data.trialinfo(:,4)~=5) ,:,:);
             arabic_labels = arabic_data.trialinfo((arabic_data.trialinfo(:,4)~=0 & arabic_data.trialinfo(:,4)~=5),4);
         end
-            %relabel labels so they go from 1:5
-        u = unique(arabic_labels);
-        n_classes = length(u);
-        if ~all(ismember(arabic_labels,1:n_classes))
-            warning('Class labels should consist of integers 1 (class 1), 2 (class 2), 3 (class 3) and so on. Relabelling them accordingly.');
-            newlabel = nan(numel(arabic_labels), 1);
-            for i = 1:n_classes
-                newlabel(arabic_labels==u(i)) = i; % set to 1:nth classes
-            end
-            arabic_labels = newlabel;
-        end
+        
+        %relabel labels so they go from 1:5
+        arabic_labels = Relabel(arabic_labels);
         
         if num < 6
             smoothed_dot_data_tmp = smoothed_dot_data(dot_data.trialinfo(:,5)~=num,:,:);
@@ -141,16 +133,7 @@ if cfg0.sysRemove
         end
 
         %relabel labels so they go from 1:5
-        u = unique(dot_labels);
-        n_classes = length(u);
-        if ~all(ismember(dot_labels,1:n_classes))
-            warning('Class labels should consist of integers 1 (class 1), 2 (class 2), 3 (class 3) and so on. Relabelling them accordingly.');
-            newlabel = nan(numel(dot_labels), 1);
-            for i = 1:n_classes
-                newlabel(dot_labels==u(i)) = i; % set to 1:nth classes
-            end
-            dot_labels = newlabel;
-        end
+        dot_labels = Relabel(dot_lables);
 
         [results_arabic,~] = mv_classify_timextime(cfgS,smoothed_arabic_data_tmp,arabic_labels,smoothed_dot_data_tmp,dot_labels);
         [results_dot,~] = mv_classify_timextime(cfgS,smoothed_dot_data_tmp,dot_labels,smoothed_arabic_data_tmp,arabic_labels);

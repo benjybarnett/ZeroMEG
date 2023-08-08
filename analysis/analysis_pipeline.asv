@@ -49,6 +49,7 @@ subjects = {
     'sub021'
     'sub022'
     'sub023'
+    'sub024'
     }; 
 
 
@@ -188,7 +189,7 @@ for subj = 1:length(subjects)
     cfg  = [];
     cfg.root = 'D:\bbarnett\Documents\Zero\data';
     cfg.mRDM_path ='D:\bbarnett\Documents\Zero\scripts\ZeroMEG\analysis';
-    cfg.mRDM_file = 'graded_zero_rdm';
+    cfg.mRDM_file = 'discrete_zero_rdm';
     cfg.num_predictors = 6;
     cfg.output_path = 'Analysis/MEG/RSA/Zero';
     cfg.dot_output_folder = 'dots';
@@ -199,7 +200,7 @@ for subj = 1:length(subjects)
     RSA_Zero(cfg,subject);
 end
 % Plot
-models = {'graded_zero_rdm'};
+models = {'graded_zero_rdm','discrete_zero_rdm'};
 colours = {'#C32F27',"#0496FF"};
 figure('units','normalized','outerposition',[0 0 1 1])
 for m = 1:length(models)
@@ -260,6 +261,54 @@ cfg.clim = [0.1 0.3];
 cfg.decoding_type = 'cross';
 plot_multiclass_temp(cfg,subjects);
 
+%% Within Condition Zero V All Decoding
+progressbar;
+for subj = 1:length(subjects)
+    subject = subjects{subj};
+    cfg  = [];
+    cfg.root = 'D:\bbarnett\Documents\Zero\data';
+    cfg.output_path = 'Analysis/MEG/Zero_Decoding/OverTime';
+    cfg.channels = 'MEG';
+    cfg.nMeanS = 7;
+    cfg.metric = {'acc','conf'};
+    cfg.output_prefix =  {'within_arabic_','within_dot_'}; %must be number data first
+    cfg.plot = false;
+    cfg.channel = 'MEG';
+    decodeZeroVAll(cfg,subject);
+    progressbar(subj/length(subjects));
+end
+% Plot Group Average
+cfg.accFile = 'zero_vs_all';
+cfg.figName = cfg.accFile;
+cfg.ylim = [0.4 0.6];
+cfg.clim = [0.4 0.6];
+cfg.decoding_type = 'within';
+plot_multiclass_temp(cfg,subjects);
+
+
+%% Cross Condition Zero V All Decoding
+for subj = 1:length(subjects)
+    subject = subjects{subj};
+    cfg  = [];
+    cfg.root = 'D:\bbarnett\Documents\Zero\data';
+    cfg.output_path = 'Analysis/MEG/Zero_Decoding/OverTime';
+    cfg.channels = 'MEG';
+    cfg.nMeanS = 7;
+    cfg.metric = {'acc','conf'};
+    cfg.output_prefix =  {'train_arabic_','train_dot_'}; %must be number data first
+    cfg.plot = false;
+    cfg.channel = 'MEG';
+    decodeZeroVAll_cross(cfg,subject);
+    
+end
+% Plot Group Average
+cfg.accFile = 'zero_vs_all';
+cfg.figName = cfg.accFile;
+cfg.ylim = [0.3 0.8];
+cfg.clim = [0.3 0.8];
+cfg.decoding_type = 'cross';
+plot_multiclass_temp(cfg,subjects);
+
 %% Cross Condition RSA
 progressbar;
 for subj = 1:length(subjects)
@@ -267,7 +316,7 @@ for subj = 1:length(subjects)
     cfg  = [];
     cfg.root = 'D:\bbarnett\Documents\Zero\data';
     cfg.mRDM_path ='D:\bbarnett\Documents\Zero\scripts\ZeroMEG\analysis';
-    cfg.mRDM_file = 'shared_numbers_rdm';
+    cfg.mRDM_file = 'shared_numbers_discrete_rdm';
     cfg.num_predictors = 12;
     cfg.output_path = 'Analysis/MEG/RSA/CrossModality';
     cfg.outputName = 'RSA_over_time.mat';
@@ -473,7 +522,7 @@ for subj = 1:length(subjects)
     cfg.roi_name = 'frontal';
     cfg.group_size = 5;
     cfg.mRDM_path ='D:\bbarnett\Documents\Zero\scripts\ZeroMEG\analysis';
-    cfg.mRDM_file = 'graded_zero_rdm';
+    cfg.mRDM_file = 'discrete_zero_rdm';
     cfg.outdir = 'Analysis\MEG\Source\RSA\dots';
     cfg.sensor_data = 'dot_trials.mat';
     cfg.num_predictors = 6;

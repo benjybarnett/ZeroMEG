@@ -24,8 +24,7 @@ subjects = {
 timeon = 0;
 timeoff = 0.5;
 load('arabic_time.mat')
-load('dot_time.mat')
-
+dot_time = arabic_time;
 %% Dots
 
 fro_acc = [];
@@ -38,10 +37,11 @@ par_conf = [];
 
 for subj = 1:length(subjects)
     subject = subjects{subj};
-    load(fullfile('D:\bbarnett\Documents\Zero\data\Analysis\MEG\Source\Decoding\dots\parietal',subject,'results.mat'))
-    acc = results.accuracy;
+    load(fullfile('D:\bbarnett\Documents\Zero\data\Analysis\MEG\Source\Decoding\Cross\parietal',subject,'train_dots.mat'))
+    results = results_dot;
+    acc = results{1};
     par_acc(subj,:,:) = acc;
-    confusion = results.confusion;
+    confusion = results{2};
 
     
     par_conf_tmp = confusion;
@@ -51,10 +51,11 @@ for subj = 1:length(subjects)
     par_conf(subj,:,:,:) = conf;
     
 
-    load(fullfile('D:\bbarnett\Documents\Zero\data\Analysis\MEG\Source\Decoding\dots\frontal',subject,'results.mat'))
-    acc = results.accuracy;
+    load(fullfile('D:\bbarnett\Documents\Zero\data\Analysis\MEG\Source\Decoding\Cross\frontal',subject,'train_dots.mat'))
+    results = results_dot;
+    acc = results{1};
     fro_acc(subj,:,:) = acc;
-    confusion = results.confusion;
+    confusion = results{2};
 
     %Only interested in confusion matrix of diagonal decoding
     %So we extract diagonal from the temporal generalisation matrix#
@@ -63,7 +64,7 @@ for subj = 1:length(subjects)
         conf(trnT,:,:) = squeeze(fro_conf_tmp(trnT,:,:,trnT));
     end
     fro_conf(subj,:,:,:) = conf;
-%}
+
 end
 
 %Plot accuracies over time Parietal

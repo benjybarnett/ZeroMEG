@@ -46,7 +46,7 @@ function dataMain = AlignPDiode(cfg0,data)
     lightDiodeSignal = ft_preprocessing(cfg, dataMain);
     
     figure;
-    for i = 1:length(lightDiodeSignal.time)
+    for i =1:length(lightDiodeSignal.time)
         plot(lightDiodeSignal.time{i},lightDiodeSignal.trial{i})
         %plot(dataMain.time{i},dataMain.trial{i}(314,:),'Color','cyan')
         hold on

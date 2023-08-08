@@ -142,7 +142,7 @@ function SourceDecode(cfg0,subject)
     cfg.features        = 'chan';
     cfg.mvpa            = [];
     cfg.mvpa.classifier = 'multiclass_lda';
-    cfg.mvpa.metric     = {'accuracy','confusion'};
+    cfg.mvpa.metric     = {'accuracy','confusion','dval'};
     cfg.mvpa.k          = 5;
     cfg.mvpa.repeat    = 1;
     cfg.mvpa.preprocess    = {'undersample'};

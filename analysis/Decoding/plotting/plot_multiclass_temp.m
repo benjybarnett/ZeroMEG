@@ -15,11 +15,11 @@ function plot_multiclass_temp(cfg0, subjects)
         if strcmp(cfg0.decoding_type,'cross')
             dot_time = arabic_time;
             %Accuracy
-            arabic_acc = load(fullfile(cfg0.root,cfg0.output_path,subject,'cross_arabic_acc.mat'));
-            dot_acc = load(fullfile(cfg0.root,cfg0.output_path,subject,'cross_dot_acc.mat'));
+            arabic_acc = load(fullfile(cfg0.root,cfg0.output_path,subject,'train_arabic_acc.mat'));
+            dot_acc = load(fullfile(cfg0.root,cfg0.output_path,subject,'train_dot_acc.mat'));
             %Confusion Matrices
-            arabic_conf_tmp = load(fullfile(cfg0.root,cfg0.output_path,subject,'cross_arabic_conf.mat'));
-            dot_conf_tmp = load(fullfile(cfg0.root,cfg0.output_path,subject,'cross_dot_conf.mat'));
+            arabic_conf_tmp = load(fullfile(cfg0.root,cfg0.output_path,subject,'train_arabic_conf.mat'));
+            dot_conf_tmp = load(fullfile(cfg0.root,cfg0.output_path,subject,'train_dot_conf.mat'));
         elseif strcmp(cfg0.decoding_type,'within')
             %Accuracy
             arabic_acc = load(fullfile(cfg0.root,cfg0.output_path,subject,'within_arabic_acc.mat'));
@@ -72,7 +72,7 @@ function plot_multiclass_temp(cfg0, subjects)
     
     %% Plot Temporal Generalisation Matrices
     if strcmp(cfg0.decoding_type,'cross')
-        titles = {'Train on Number, Test on Detection', 'Train on Detection, Test on Number','Train on Number: Diagonal','Train on Detection: Diagonal'};
+        titles = {'Train on Arabic, Test on Dots', 'Train on Dots, Test on Arabic','Train on Arabic: Diagonal','Train on Dots: Diagonal'};
     else
         titles = {'Arabic Decoding', 'Dot Decoding','Arabic Decoding: Diagonal','Dot Decoding: Diagonal'};
     end
