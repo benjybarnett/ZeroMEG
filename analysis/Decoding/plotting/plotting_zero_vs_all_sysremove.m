@@ -156,7 +156,7 @@
             
             plot(dot_time(1:5:length(dot_time)),mean_dot_diag(1:5:length(dot_time)),'Color', ci_colours{num}, 'LineWidth', 1);
             xlim([dot_time(1) dot_time(end)]);
-            ylim([0.4 0.8])
+            ylim([0.4 0.9])
             title('Train on Dots');
             
 

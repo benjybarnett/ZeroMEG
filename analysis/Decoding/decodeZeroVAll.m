@@ -68,8 +68,8 @@ end
 %So each non-zero numerosity appears the same number of times
 cfgB = [];
 cfgB.numNTClass = 5;
-[smoothed_arabic_data,arabic_labels] = UndersampleBinarise(cfgB,smoothed_arabic_data,arabic_data.trialinfo(:,4)+1);
-[smoothed_dot_data,dot_labels] = UndersampleBinarise(cfgB,smoothed_dot_data,dot_data.trialinfo(:,5)+1);
+[smoothed_arabic_data,arabic_labels] = UndersampleBinarise(cfgB,smoothed_arabic_data,arabic_data.trialinfo(:,4)+1,1);
+[smoothed_dot_data,dot_labels] = UndersampleBinarise(cfgB,smoothed_dot_data,dot_data.trialinfo(:,5)+1,1);
 
 %% Binarise labels
 arabic_labels = (arabic_labels == 1)+1;

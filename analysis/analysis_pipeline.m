@@ -312,6 +312,28 @@ cfg.clim = [0.4 0.7];
 cfg.decoding_type = 'cross';
 plot_multiclass_temp(cfg,subjects);
 
+%% Pairwise Discriminability Decoding
+progressbar;
+for subj = 1:length(subjects)
+    subject = subjects{subj};
+    cfg  = [];
+    cfg.root = 'D:\bbarnett\Documents\Zero\data';
+    cfg.output_path = 'Analysis/MEG/Discriminability/OverTime';
+    cfg.channels = 'MEG';
+    cfg.nMeanS = 7;
+    cfg.output_prefix =  {'within_arabic_','within_dot_'}; %must be number data first
+    cfg.channel = 'MEG';
+    numDiscriminability(cfg,subject);
+    progressbar(subj/length(subjects));
+end
+% Plot Group Average
+cfg.accFile = 'zero_vs_all';
+cfg.figName = cfg.accFile;
+cfg.ylim = [0.4 0.9];
+cfg.clim = [0.4 0.9];
+cfg.decoding_type = 'within';
+plot_multiclass_temp(cfg,subjects);
+
 %% Cross Condition RSA
 progressbar;
 for subj = 1:length(subjects)
