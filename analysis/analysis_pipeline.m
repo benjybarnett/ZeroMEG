@@ -50,6 +50,8 @@ subjects = {
     'sub022'
     'sub023'
     'sub024'
+    'sub025'
+    'sub026'
     }; 
 
 
@@ -61,7 +63,7 @@ for subj = 1:length(subjects)
     
     cfg = [];
     cfg.root = 'D:\bbarnett\Documents\Zero\data\Raw';
-    cfg.plot = false;
+    cfg.plot =0;
     [subjCurves{subj},meanRTs{subj}] = BehaviourAnalysis(cfg,subject);
 end
 groupBehav(subjCurves,meanRTs);
@@ -519,6 +521,44 @@ for subj = 1:length(subjects)
     cfg.roi_name = 'parietal';
     SourceCrossDecode(cfg,subject); %parietal decoding
 
+
+    progressbar(subj/length(subjects));
+    
+end
+toc;
+
+%% SOURCE NUMBER DISCRIMINABILITY
+tic;
+progressbar;
+for subj = 1:length(subjects)
+    subject = subjects{subj};
+
+    disp(subject);
+    
+    %Dots
+    cfg = [];
+    cfg.root = 'D:\bbarnett\Documents\Zero\data';
+    cfg.vChanOutDir = 'Analysis\MEG\Source\virtualchannels\dots';
+    cfg.roi_name = 'frontal';
+    cfg.tSmooth = 7;
+    cfg.pca =false;
+    cfg.outdir = 'Analysis\MEG\Source\Decoding\dots';
+    cfg.sensor_data = 'dot_trials.mat';
+    SourceNumDiscriminability(cfg,subject); %frontal decoding
+
+    cfg.roi_name = 'parietal';
+    SourceNumDiscriminability(cfg,subject); %parietal decoding
+
+    %Arabic
+    cfg.vChanOutDir = 'Analysis\MEG\Source\virtualchannels\arabic';
+    cfg.roi_name = 'frontal';
+    cfg.outdir = 'Analysis\MEG\Source\Decoding\arabic';
+    cfg.sensor_data = 'arabic_trials.mat';
+    cfg.group_size = 5;
+    SourceNumDiscriminability(cfg,subject); %frontal decoding
+
+    cfg.roi_name = 'parietal';
+    SourceNumDiscriminability(cfg,subject); %parietal decoding
 
     progressbar(subj/length(subjects));
     

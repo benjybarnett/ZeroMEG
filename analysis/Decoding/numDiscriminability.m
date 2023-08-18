@@ -82,7 +82,7 @@ for num = 1:6
     cfgS = [];
     cfgS.classifier = 'lda';
     cfgS.metric = 'auc';
-    cfgS.preprocess ={'undersample'};%we dont avg samples here to increase number of trials for dot decoder
+    cfgS.preprocess ={'undersample','average_samples'};
     cfgS.repeat = 1;
     [results_arabic,~] = mv_classify(cfgS,arabic_data_tmp,arabic_labels);
     [results_dot,~] = mv_classify(cfgS,dot_data_tmp,dot_labels);
@@ -90,8 +90,8 @@ for num = 1:6
     within_arabic_acc = results_arabic;
     within_dot_acc = results_dot;
     %Save
-    save(fullfile(outputDir,[cfg0.output_prefix{1},'_',num2str(num-1)]),'within_arabic_acc');
-    save(fullfile(outputDir,[cfg0.output_prefix{2},'_',num2str(num-1)]),'within_dot_acc');
+    save(fullfile(outputDir,[cfg0.output_prefix{1},num2str(num-1)]),'within_arabic_acc');
+    save(fullfile(outputDir,[cfg0.output_prefix{2},num2str(num-1)]),'within_dot_acc');
   
     clear arabic_data_tmp dot_data_tmp
 

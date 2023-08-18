@@ -274,19 +274,21 @@ for subj = 1:length(subjects)
     cfg.output_prefix =  {'within_arabic_','within_dot_'}; %must be number data first
     cfg.plot = false;
     cfg.channel = 'MEG';
+    cfg.sysRemove = true;
     decodeZeroVAll(cfg,subject);
     progressbar(subj/length(subjects));
 end
 % Plot Group Average
 cfg.accFile = 'zero_vs_all';
 cfg.figName = cfg.accFile;
-cfg.ylim = [0.4 0.6];
-cfg.clim = [0.4 0.6];
+cfg.ylim = [0.4 0.9];
+cfg.clim = [0.4 0.9];
 cfg.decoding_type = 'within';
 plot_multiclass_temp(cfg,subjects);
 
 
 %% Cross Condition Zero V All Decoding
+progressbar;
 for subj = 1:length(subjects)
     subject = subjects{subj};
     cfg  = [];
@@ -298,15 +300,38 @@ for subj = 1:length(subjects)
     cfg.output_prefix =  {'train_arabic_','train_dot_'}; %must be number data first
     cfg.plot = false;
     cfg.channel = 'MEG';
+    cfg.sysRemove = true;
     decodeZeroVAll_cross(cfg,subject);
-    
+    progressbar(subj/length(subjects));  
 end
 % Plot Group Average
 cfg.accFile = 'zero_vs_all';
 cfg.figName = cfg.accFile;
-cfg.ylim = [0.3 0.8];
-cfg.clim = [0.3 0.8];
+cfg.ylim = [0.4 0.7];
+cfg.clim = [0.4 0.7];
 cfg.decoding_type = 'cross';
+plot_multiclass_temp(cfg,subjects);
+
+%% Pairwise Discriminability Decoding
+progressbar;
+for subj = 1:length(subjects)
+    subject = subjects{subj};
+    cfg  = [];
+    cfg.root = 'D:\bbarnett\Documents\Zero\data';
+    cfg.output_path = 'Analysis/MEG/Discriminability/OverTime';
+    cfg.channels = 'MEG';
+    cfg.nMeanS = 7;
+    cfg.output_prefix =  {'within_arabic_','within_dot_'}; %must be number data first
+    cfg.channel = 'MEG';
+    numDiscriminability(cfg,subject);
+    progressbar(subj/length(subjects));
+end
+% Plot Group Average
+cfg.accFile = 'zero_vs_all';
+cfg.figName = cfg.accFile;
+cfg.ylim = [0.4 0.9];
+cfg.clim = [0.4 0.9];
+cfg.decoding_type = 'within';
 plot_multiclass_temp(cfg,subjects);
 
 %% Cross Condition RSA
@@ -494,6 +519,57 @@ for subj = 1:length(subjects)
     cfg.roi_name = 'parietal';
     SourceCrossDecode(cfg,subject); %parietal decoding
 
+
+    progressbar(subj/length(subjects));
+    
+end
+toc;
+
+%% SOURCE NUMBER DISCRIMINABILITY
+tic;
+progressbar;
+for subj = 1:length(subjects)
+    subject = subjects{subj};
+
+    disp(subject);
+    
+    %Dots
+    cfg = [];
+    cfg.root = 'D:\bbarnett\Documents\Zero\data';
+    cfg.rawDir =  'D:\bbarnett\Documents\Zero\data\Raw';
+    cfg.vChanOutDir = 'Analysis\MEG\Source\virtualchannels\dots';
+    cfg.roiLabelIdxs = {'Cingulum_Ant_L', 'Cingulum_Ant_R',  'Rectus_L', 'Rectus_R', 'Frontal_Sup_L'	'Frontal_Sup_R'	'Frontal_Sup_Orb_L'	'Frontal_Sup_Orb_R'	'Frontal_Mid_L'	'Frontal_Mid_R'	'Frontal_Mid_Orb_L'	'Frontal_Mid_Orb_R'	'Frontal_Inf_Oper_L'	'Frontal_Inf_Oper_R'	'Frontal_Inf_Tri_L'	'Frontal_Inf_Tri_R'	'Frontal_Inf_Orb_L'	'Frontal_Inf_Orb_R'	'Frontal_Sup_Medial_L'	'Frontal_Sup_Medial_R'	'Frontal_Med_Orb_L'	'Frontal_Med_Orb_R'};
+    cfg.roi_name = 'frontal';
+    cfg.tSmooth = 7;
+    cfg.group_size = 5;
+    cfg.pca =false;
+    cfg.outdir = 'Analysis\MEG\Source\Decoding\dots';
+    cfg.sensor_data = 'dot_trials.mat';
+    SourceNumDiscriminability(cfg,subject); %frontal decoding
+
+    cfg.roiLabelIdxs = {'Parietal_Sup_L'	'Parietal_Sup_R'	'Parietal_Inf_L'	'Parietal_Inf_R' 'SupraMarginal_L'	'SupraMarginal_R'	'Angular_L'	'Angular_R' 'Precuneus_L' 'Precuneus_R'};
+    cfg.roi_name = 'parietal';
+    SourceDecode(cfg,subject); %parietal decoding
+
+    %Arabic
+    cfg.vChanOutDir = 'Analysis\MEG\Source\virtualchannels\arabic';
+    cfg.roiLabelIdxs = {'Cingulum_Ant_L', 'Cingulum_Ant_R',  'Rectus_L', 'Rectus_R', 'Frontal_Sup_L'	'Frontal_Sup_R'	'Frontal_Sup_Orb_L'	'Frontal_Sup_Orb_R'	'Frontal_Mid_L'	'Frontal_Mid_R'	'Frontal_Mid_Orb_L'	'Frontal_Mid_Orb_R'	'Frontal_Inf_Oper_L'	'Frontal_Inf_Oper_R'	'Frontal_Inf_Tri_L'	'Frontal_Inf_Tri_R'	'Frontal_Inf_Orb_L'	'Frontal_Inf_Orb_R'	'Frontal_Sup_Medial_L'	'Frontal_Sup_Medial_R'	'Frontal_Med_Orb_L'	'Frontal_Med_Orb_R'};
+    cfg.roi_name = 'frontal';
+    cfg.outdir = 'Analysis\MEG\Source\Decoding\arabic';
+    cfg.sensor_data = 'arabic_trials.mat';
+    cfg.group_size = 5;
+    cfg.timepoints = [0.35 0.6];
+    cfg.condition_trls = {'meg_data.trialinfo(:,4) == 0 & meg_data.trialinfo(:,6) ~= 0'
+                            'meg_data.trialinfo(:,4) == 1 & meg_data.trialinfo(:,6) ~= 0'
+                            'meg_data.trialinfo(:,4) == 2 & meg_data.trialinfo(:,6) ~= 0'
+                            'meg_data.trialinfo(:,4) == 3 & meg_data.trialinfo(:,6) ~= 0'
+                            'meg_data.trialinfo(:,4) == 4 & meg_data.trialinfo(:,6) ~= 0'
+                            'meg_data.trialinfo(:,4) == 5 & meg_data.trialinfo(:,6) ~= 0'}; 
+    SourceDecode(cfg,subject); %frontal decoding
+
+    cfg.roiLabelIdxs = {'Parietal_Sup_L'	'Parietal_Sup_R'	'Parietal_Inf_L'	'Parietal_Inf_R' 'SupraMarginal_L'	'SupraMarginal_R'	'Angular_L'	'Angular_R' 'Precuneus_L' 'Precuneus_R'};
+    cfg.roi_name = 'parietal';
+    SourceDecode(cfg,subject); %parietal decoding
 
     progressbar(subj/length(subjects));
     

@@ -1,4 +1,4 @@
-function SourceDecode(cfg0,subject)
+function SourceNumDiscriminability(cfg0,subject)
 
     % SourceDecode Function
     % 
@@ -20,7 +20,7 @@ function SourceDecode(cfg0,subject)
     % 
     
     %Author: Benjy Barnett 2023
-    outputDir = fullfile(cfg0.outdir,subject);
+    outputDir = fullfile(cfg0.outdir,cfg0.roi_name,subject);
     if ~isfolder(outputDir);mkdir(outputDir);end
     
     if ~isfolder(fullfile(cfg0.root,cfg0.vChanOutDir,cfg0.roi_name,subject))
@@ -121,70 +121,40 @@ function SourceDecode(cfg0,subject)
         numcomponent = 0;
     end
 
-    %Decode
-    %{
-    cfgS = [];
-    cfgS.classifier = 'multiclass_lda';
-    cfgS.metric = cfg0.metric;
-    cfgS.preprocess ={'undersample'};%averaging samples before source recon
-    cfgS.repeat = 1;
-    cfgS.feedback = true;
-    cfg.sample_dimension = 1;
-    cfg.feature_dimension = 2;
-    cfgS.generalization_dimension = 3;
-    [results,~] = mv_classify(cfgS,smoothed_X,Y); 
-    %}
-    cfg = [] ;
-    cfg.method          = 'mvpa';
-    cfg.avgovertime     = 'no';
-    cfg.design          = vChannels.trialinfo;
-    %cfg.design = cfg.design(randperm(length(cfg.design)));
-    cfg.features        = 'chan';
-    cfg.mvpa            = [];
-    cfg.mvpa.classifier = 'multiclass_lda';
-    cfg.mvpa.metric     = {'accuracy','confusion'};
-    cfg.mvpa.k          = 5;
-    cfg.mvpa.repeat    = 1;
-    cfg.mvpa.preprocess    = {'undersample'};
-    cfg.generalize = 'time';
-    results = ft_timelockstatistics(cfg, vChannels);
-   
-    %{
-    %% Confusion Matrix Averaged Over Time
-    % Average over user-specified times
-    if contains(cfg0.sensor_data,'dot')
-        time = load('dot_time.mat');
-        time = time.dot_time;
-    elseif contains(cfg0.sensor_data,'arabic')
-        time = load('arabic_time.mat');
-        time = time.arabic_time;
+    %% Get Trial x Channels x Time Matrix For Each Task
+    data = zeros(size(vChannels.trial,2),size(vChannels.label,1),size(vChannels.time{1},2));
+    for trl = 1:length(vChannels.trial)
+        data(trl,:,:) = vChannels.trial{trl};
     end
 
-    beg = find(time == cfg0.timepoints(1));
-    fin =  find(time == cfg0.timepoints(2));
+    %% Pairwise decode for each number
+    for num = 1:6
 
-    avg_X = squeeze(mean(smoothed_X(:,:,beg:fin),3));
-    
-    %Decode
-    cfgS = [];
-    cfgS.classifier = 'multiclass_lda';
-    cfgS.metric = 'confusion';
-    cfgS.preprocess ={'undersample'};%averaging samples before source recon
-    cfgS.repeat = 1;
-    cfgS.feedback = true;
-    [avg_conf,~] = mv_classify(cfgS,avg_X,Y); 
-    clear avg_X
-    %}
+        %% Undersample Non-Target Class
+        %So each non-target numerosity appears the same number of times
+        cfgB = [];
+        cfgB.numNTClass = 5;
+        [data_tmp,labels] = UndersampleBinarise(cfgB,data,vChannels.trialinfo+1,num);
 
-    %Save
-    if cfg0.pca
-        outputDir = fullfile(cfg0.root,cfg0.outdir,cfg0.roi_name,'pca',subject);
-    else
-        outputDir = fullfile(cfg0.root,cfg0.outdir,cfg0.roi_name,subject);
+        %% Binarise labels
+        labels = (labels == num)+1;
+
+        %% Within Time x Time Decoding
+        cfgS = [];
+        cfgS.classifier = 'lda';
+        cfgS.metric = 'auc';
+        cfgS.preprocess ={'undersample'};
+        cfgS.repeat = 1;
+        [results,~] = mv_classify(cfgS,data_tmp,labels);
+        acc = results;
+
+        %Save
+        save(fullfile(cfg0.root,outputDir,[num2str(num-1),'.mat']),'acc');
+
+        clear data_tmp
+
     end
-    if ~isfolder(outputDir);mkdir(outputDir);end
-    save(fullfile(outputDir,'results.mat'),'results');
-    %save(fullfile(outputDir,'avg_conf.mat'),'avg_conf');
 
-    clear results smoothed_X Y
+
+
 end
