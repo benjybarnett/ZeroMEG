@@ -1,4 +1,4 @@
-function [curves,meanRTs] = BehaviourAnalysis(cfg0,subject)
+function [curves,meanRTs,arabic_acc,dot_acc] = BehaviourAnalysis(cfg0,subject)
 
     %% Load Data
     load(fullfile(cfg0.root,subject,'meg','trial_data','data.mat'));
@@ -30,6 +30,8 @@ function [curves,meanRTs] = BehaviourAnalysis(cfg0,subject)
     propOrange =  (length(orange)/length(arb_data))*100;
     fprintf('%s has these proportions of colour responses: \n %.2f%% Blue \n %.2f%% Orange\n',...
         subject,propBlue,propOrange)
+
+    arabic_acc = perc_corr;
 
     %% Numerical Match to Sample
     disp('NUMERICAL TASK')
@@ -110,4 +112,8 @@ function [curves,meanRTs] = BehaviourAnalysis(cfg0,subject)
 
      %return
     curves = [zero_curve; one_curve; two_curve; three_curve; four_curve; five_curve];
+
+    
+
+    dot_acc = perc_corr;
 end

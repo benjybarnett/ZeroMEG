@@ -38,6 +38,10 @@ function rhos = RunCrossRSA(cfg0,tl_data,des_mat)
     mRDM = struct2cell(mRDM); mRDM = mRDM{1};  
     mRDM = mRDM(end-(cfg0.num_predictors/2)+1:end,1:cfg0.num_predictors/2);% get lower left quadrant (i.e. cross-condition section)
     mRDM = mRDM(:);
+    if cfg0.removeDiag 
+        disp('Removing diagonal of model RDM')
+         mRDM(1:((cfg0.num_predictors/2)+1):end) = [];
+    end
 
 
     %% Correlate Neural RDM with Model RDM
@@ -46,6 +50,9 @@ function rhos = RunCrossRSA(cfg0,tl_data,des_mat)
         nRDM = smoothnRDMs(:,:,n);
         nRDM = nRDM(end-(cfg0.num_predictors/2)+1:end,1:cfg0.num_predictors/2);% get lower left quadrant (i.e. cross-condition section)
         nRDM = nRDM(:);
+        if cfg0.removeDiag
+            nRDM(1:((cfg0.num_predictors/2)+1):end) = [];
+        end
         rho = corr(nRDM,mRDM,'Type','Kendall');
         rhos = [rhos rho];
     end

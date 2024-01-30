@@ -17,7 +17,7 @@ function  RSA_DotControl(cfg0,subject)
 
     %% Create Design Matrix of Dummy Coded Predictors
     trial_info = data.trialinfo;
-    des_mat = zeros(length(trial_info),cfg0.num_predictors*2);
+    des_mat = zeros(length(trial_info),cfg0.num_predictors);
 
     % Get Indexes of Different Classes of Interest
     % Indexes = [Task, Number,StimSet]

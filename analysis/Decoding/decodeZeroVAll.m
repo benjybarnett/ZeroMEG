@@ -166,8 +166,8 @@ if cfg0.sysRemove
         %So each non-zero numerosity appears the same number of times
         cfgB = [];
         cfgB.numNTClass = 4;
-        [smoothed_arabic_data,arabic_labels] = UndersampleBinarise(cfgB,smoothed_arabic_data,arabic_labels);
-        [smoothed_dot_data,dot_labels] = UndersampleBinarise(cfgB,smoothed_dot_data,dot_labels);
+        [smoothed_arabic_data,arabic_labels] = UndersampleBinarise(cfgB,smoothed_arabic_data,arabic_labels,1);
+        [smoothed_dot_data,dot_labels] = UndersampleBinarise(cfgB,smoothed_dot_data,dot_labels,1);
 
         %% Binarise labels
         arabic_labels = (arabic_labels == 1)+1;

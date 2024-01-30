@@ -47,7 +47,7 @@ function NumberConfusion(cfg0,subject)
     %% Decode
     cfg = [] ;
     cfg.method          = 'mvpa';
-    cfg.latency         = cfg0.timepoints;
+    cfg.latency         = cfg0.dot_timepoints;
     cfg.avgovertime     = 'yes';
     cfg.design          = dot_data_TL.trialinfo(:,5);
     %cfg.design = cfg.design(randperm(length(cfg.design)));
@@ -56,9 +56,11 @@ function NumberConfusion(cfg0,subject)
     cfg.mvpa.classifier = 'multiclass_lda';
     cfg.mvpa.metric     = 'conf';
     cfg.mvpa.k          = 5;
+    cfg.mvpa.repeat = 1;
     cfg.mvpa.preproc    = {'undersample','average_samples'};
     conf_dots = ft_timelockstatistics(cfg, dot_data_TL);
-
+    
+    cfg.latency = cfg0.arabic_timepoints;
     cfg.design          = arabic_data_TL.trialinfo(:,4);
     conf_arabic = ft_timelockstatistics(cfg, arabic_data_TL);
     %% Save

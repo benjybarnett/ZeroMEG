@@ -45,9 +45,11 @@ end
 
 %%
 
-fslCmd = sprintf('cluster -i %s --thresh=%f --mm',inputfile,threshold);
+fslCmd = sprintf('cluster -i %s --thresh=%f --mm',cfg.inputfile,cfg.threshold);
 
 [~, clusterOutput] = unix(fslCmd);
+
+disp(clusterOutput)
 
 cellTable        = textscan(clusterOutput,'%s %s %s %s %s %s %s %s %s');
 cellTable        = horzcat(cellTable{:});
@@ -81,7 +83,7 @@ if findLabels
     
     switch atlas
         case 'aal'
-            atlasFn = '/vol/ccnlab-scratch1/naddij/fieldtrip-20140614/template/atlas/aal/ROI_MNI_V4.nii';
+            atlasFn = 'D:\bbarnett\Documents\ecobrain\fieldtrip-master-MVPA\template\atlas\aal\ROI_MNI_V4.nii';
         case 'afni'
             atlasFn = '/vol/ccnlab-scratch1/naddij/fieldtrip-20140614/template/atlas/afni/TTatlas+tlrc.BRIK';
         otherwise

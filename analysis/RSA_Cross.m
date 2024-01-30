@@ -87,7 +87,11 @@ function  RSA_Cross(cfg0,subject)
 
     
     %% Save
-    outputDir = fullfile(cfg0.root,cfg0.output_path,subject,cfg0.mRDM_file);
+    if ~cfg0.removeDiag
+        outputDir = fullfile(cfg0.root,cfg0.output_path,subject,cfg0.mRDM_file);
+    elseif cfg0.removeDiag
+        outputDir = fullfile(cfg0.root,cfg0.output_path,subject,cfg0.mRDM_file,'NoDiag');
+    end
     if ~exist(outputDir,'dir'); mkdir(outputDir); end
     save(fullfile(outputDir,'rhos_no_diag.mat'), 'rhos')
 

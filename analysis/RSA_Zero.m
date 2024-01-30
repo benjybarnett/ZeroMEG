@@ -87,8 +87,8 @@ function  RSA_Zero(cfg0,subject)
 
     
     %% Save
-    dotOutputDir = fullfile(cfg0.root,cfg0.output_path,subject,cfg0.dot_output_folder);
-    arabicOutputDir = fullfile(cfg0.root,cfg0.output_path,subject,cfg0.arabic_output_folder);
+    dotOutputDir = fullfile(cfg0.root,cfg0.output_path,subject,cfg0.dot_output_folder,cfg0.mRDM_file);
+    arabicOutputDir = fullfile(cfg0.root,cfg0.output_path,subject,cfg0.arabic_output_folder,cfg0.mRDM_file);
     if ~exist(dotOutputDir,'dir'); mkdir(dotOutputDir); end 
     if ~exist(arabicOutputDir,'dir'); mkdir(arabicOutputDir); end
     save(fullfile(dotOutputDir,'rhos_no_diag.mat'), 'dot_rhos')
